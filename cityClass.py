@@ -17,7 +17,7 @@ class City:
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
         # tracking variables
         self.LoadedGoods = np.zeros(360, dtype=float) # goods taken by the airship, updated daily
-        self.LostGoods = np.zeros(360, dtype=float) # goods not picked up by airship so they go bad, updated daily
+        self.LostGoods = AvailableGoods # goods not picked up by airship so they go bad, updated daily
         self.LoadingTime = np.zeros(360, dtype=float)
 
 
