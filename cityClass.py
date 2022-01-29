@@ -7,7 +7,7 @@ class City:
     def __init__(self, env, id, LatLon, AvailableGoods, AvgLoadingRate, LoadingResources):
         self.env = env
         self.LatLon = LatLon
-        self.id = id
+        self.ID = id
         # fruit data
         self.AvailableGoods = AvailableGoods # tons of goods available each day
         # cost function for available fruit, most expensive fruit is prioritized 
@@ -16,9 +16,9 @@ class City:
         self.LoadingRate = AvgLoadingRate
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
         # tracking variables
-        self.LoadedGoods = np.zeros(360, dtype=float) # goods taken by the airship, updated daily
+        self.LoadedGoods = np.zeros(365, dtype=float) # goods taken by the airship, updated daily
         self.LostGoods = AvailableGoods # goods not picked up by airship so they go bad, updated daily
-        self.LoadingTime = np.zeros(360, dtype=float)
+        self.LoadingTime = np.zeros(365, dtype=float)
 
 
     
