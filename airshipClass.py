@@ -2,7 +2,7 @@
 Airship Class
 """
 import numpy as np
-
+import random
 
 class Airship:
     """"""
@@ -33,6 +33,12 @@ class Airship:
         self.TimeUtilized = np.zeros(365,dtype=float)
         self.TimeEndedWorkday = np.zeros(365,dtype=float)
         self.DailyFuelConsumption = np.zeros(365,dtype=float)
+        # 0 = start working
+        # 1 = to_city
+        # 2 = to_hub
+        # 3 = end_day
+        self.SimulationLogic = [0]
+        self.SimulationTracker = np.zeros((1,5))
         
         # status variables
         self.StillWorkday = True
@@ -49,10 +55,12 @@ class Airship:
     # Action Functions
     def start_working(self): # main operation loop
         yield self.env.timeout(self.StartHourWorkday)
-        print(self.ID + ' starting sim at %.3f'%self.env.now)
-
+        #print(self.ID + ' starting sim at %.3f'%self.env.now)
         while True: # run until sim is over
+            self.SimulationLogic.append(0)
+            self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis = 0)
             yield self.env.process(self.working())
+            self.SimulationLogic.append(3)
             yield self.env.process(self.stop_working())
             
 
@@ -66,22 +74,26 @@ class Airship:
         while self.StillWorkday: # work until end of the day
             self.StillWorkday = bool(self.env.now < self.EndHourWorkday)
             self.choose_city()
-            print(self.ID + ' choosing city at %.2f'%self.env.now)
+            #print(self.ID + ' choosing city at %.2f'%self.env.now)
             
-            if self.AtHub and self.CitySelected: # at hub, city choice
+            if self.AtHub and not self.CitySelected: # at hub, no city chosen
+                break # leave loop and to go to stop working
+
+            elif self.AtHub and self.CitySelected: # at hub, city choice
+                self.SimulationLogic.append(1)
                 yield self.env.process(self.hub_to_city())
             
-            elif self.AtHub and not self.CitySelected: # at hub, no city chosen
-                pass # leave loop and to go to stop working
-            
             elif not self.AtHub and self.CitySelected: # not at hub, city chosen
+                self.SimulationLogic.append(1)
                 yield self.env.process(self.city_to_city())
            
             elif not self.AtHub and not self.CitySelected: # not at hub and no city chosen
+                self.SimulationLogic.append(2)
                 yield self.env.process(self.city_to_hub())
 
     def stop_working(self):
-        print(self.ID + ' done working at %.2f'%self.env.now)
+        #print(self.ID + ' done working at %.2f'%self.env.now)
+        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -6.9, self.PayloadRemaining, self.FuelRemaining]], axis=0)
         self.TimeEndedWorkday[self.CurrentDay] = self.env.now
         self.work_clock()
         timeUntilNextWorkday = self.StartHourWorkday - self.env.now
@@ -95,40 +107,47 @@ class Airship:
         # if fleet, incorporate resource, add 'waiting'
         # fly
         yield self.env.timeout(self.TimeToNextCity)
-
-        print(self.ID + ' arriving at ' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
-
+        #print(self.ID + ' arriving at ' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
         self.CurrentCity = self.NextCity
         self.CurrentLatLon = self.Cities[self.CurrentCity].LatLon
         self.AtHub = False
         self.FuelRemaining = self.FuelRemaining - self.FuelToNextCity
+
         # land, load cargo, etc.
         yield self.env.process(self.choose_city_activity())
+        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
 
-    def city_to_hub(self):
-        # fly
-        distanceToHubFromNextCity = self.distance_between_coordinates(self.Cities[self.CurrentCity].LatLon, self.Hub.LatLon)
-        timeToHubFromCity = distanceToHubFromNextCity / self.CruiseSpeed
-        yield self.env.timeout(timeToHubFromCity)
-
-        print(self.ID + ' arriving at Hub at %.2f'%self.env.now)
-
-        self.CurrentLatLon = self.Hub.LatLon
-        self.AtHub = True
-        # land, unload cargo, refuel, maintenance, etc.
-        yield self.env.process(self.choose_hub_activity())
 
     def city_to_city(self):
         yield self.env.timeout(self.TimeToNextCity)
 
-        print(self.ID + ' arriving at' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
+        #print(self.ID + ' arriving at' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
 
         self.CurrentCity = self.NextCity
         self.CurrentLatLon = self.Cities[self.CurrentCity].LatLon
         self.AtHub = False
         self.FuelRemaining = self.FuelRemaining - self.FuelToNextCity
+
         # land, load cargo, etc.
         yield self.env.process(self.choose_city_activity())
+        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+
+    def city_to_hub(self):
+        # fly
+        distanceToHubFromCity = self.distance_between_coordinates(self.Cities[self.CurrentCity].LatLon, self.Hub.LatLon)
+        timeToHubFromCity = distanceToHubFromCity / self.CruiseSpeed
+        yield self.env.timeout(timeToHubFromCity)
+
+        fuelToHubFromCity = self.calculate_fuel_used(timeToHubFromCity)
+        self.FuelRemaining = self.FuelRemaining - fuelToHubFromCity
+
+        #print(self.ID + ' arriving at Hub at %.2f'%self.env.now)
+        self.CurrentLatLon = self.Hub.LatLon
+        self.AtHub = True
+        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        # land, unload cargo, refuel, maintenance, etc.
+        yield self.env.process(self.choose_hub_activity())
+        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
 
 
     def load_cargo(self):
@@ -138,20 +157,20 @@ class Airship:
         - Add Loading Resource
         """
         goodsToLoad = self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay]
-        if goodsToLoad > self.UsefulPayload:
-            goodsLoaded = self.UsefulPayload
-            self.PayloadRemaining = 0.0
-        elif goodsToLoad > self.PayloadRemaining:
-            goodsLoaded = self.PayloadRemaining
-            self.PayloadRemaining = 0.0
+        # if goodsToLoad > self.UsefulPayload:
+        #     goodsLoaded = self.PayloadRemaining * random.random()
+        #     self.PayloadRemaining -= goodsLoaded
+        if goodsToLoad > self.PayloadRemaining:
+            goodsLoaded = self.PayloadRemaining  * random.random()
+            self.PayloadRemaining -= goodsLoaded
         else:
-            goodsLoaded = goodsToLoad
-            self.PayloadRemaining = self.UsefulPayload - goodsLoaded
+            goodsLoaded = goodsToLoad  #* random.random()
+            self.PayloadRemaining -= goodsLoaded
         
         timeToLoad = goodsLoaded / self.Cities[self.CurrentCity].LoadingRate
         yield self.env.timeout(timeToLoad)
 
-        print(self.ID + ' done loading at %.2f'%self.env.now)
+        #print(self.ID + ' done loading at %.2f'%self.env.now)
 
         self.Cities[self.CurrentCity].LoadingTime[self.CurrentDay] += timeToLoad
         self.Cities[self.CurrentCity].LoadedGoods[self.CurrentDay] += goodsLoaded
@@ -169,7 +188,7 @@ class Airship:
             timeToUnload = goodsUnloaded / self.Hub.UnloadingRate
             yield self.env.timeout(timeToUnload)
 
-            print(self.ID + ' done unloading at %.2f'%self.env.now)
+            #print(self.ID + ' done unloading at %.2f'%self.env.now)
 
             self.PayloadRemaining = self.UsefulPayload
             self.Hub.RecievedGoods[self.CurrentDay] += goodsUnloaded
@@ -182,7 +201,7 @@ class Airship:
             yield refuelReq
             yield self.env.timeout(self.Hub.AvgRefuelTime)
 
-            print(self.ID + ' done refueling at %.2f'%self.env.now)
+            #print(self.ID + ' done refueling at %.2f'%self.env.now)
 
             fuelUsed = self.FuelCapacity - self.FuelRemaining
             self.DailyFuelConsumption[self.CurrentDay] += fuelUsed
@@ -195,7 +214,7 @@ class Airship:
         with self.Hub.RepairResource.request() as repairReq:
             yield repairReq
             yield self.env.timeout(self.Hub.AvgRepairTime)
-            print(self.ID + ' done maintenance at %.2f'%self.env.now)
+            #print(self.ID + ' done maintenance at %.2f'%self.env.now)
             
         
     def wait(self):
@@ -214,14 +233,16 @@ class Airship:
             for i in range(len(self.Cities)):
                 self.next_city()
                 self.in_range()
-                if self.InRange and self.PayloadRemaining > 0 and not self.CurrentCity == self.NextCity:
+                goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay] - self.Cities[self.NextCity].LoadedGoods[self.CurrentDay]
+                if self.InRange and self.PayloadRemaining > 0.5 and goodsAtCity > 0.5 and not self.CurrentCity == self.NextCity:
                     self.CitySelected = True
                     break
                 else:
                     self.CitySelected = False
 
     def next_city(self):
-        self.NextCity +=1
+        # self.NextCity +=1
+        self.NextCity = random.randint(0,len(self.Cities))
         if self.NextCity >= len(self.Cities):
             self.NextCity = 0
     
@@ -256,7 +277,7 @@ class Airship:
 
     # Miscellaneous Calculations
     def work_clock(self):
-        print(self.ID + ' ending day %.0f'%self.CurrentDay)
+        #print(self.ID + ' ending day %.0f'%self.CurrentDay)
         self.CurrentDay += 1
         self.StartHourWorkday += 24
         self.EndHourWorkday += 24 

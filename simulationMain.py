@@ -6,6 +6,8 @@ Simulation
 import simpy
 import random
 import numpy as np
+import pandas as pd
+from datetime import datetime
 # my files
 import airshipClass
 import cityClass
@@ -24,7 +26,7 @@ cityCoordinates = [ [-3.139, -60.248],  # city
                     [-3.387, -60.344],  # city
                     [-3.276, -60.190] ] # city
 # Hub Attributes #
-AvgUnloadingRate = 10.0 # tons/hour
+AvgUnloadingRate = 50.0 # tons/hour
 UnloadingResource = 1
 AvgRepairTime = 0.0
 RepairResource = 1
@@ -33,12 +35,12 @@ RefuelResource = 1
 
 # City Attributes #
 AvailableGoods = np.ones(365)*100.0
-AvgLoadingRate = 10.0 # tons/hour
+AvgLoadingRate = 50.0 # tons/hour
 LoadingResources = 1
 
 # Airship Attributes #
 # Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
-dataDOE = np.array([100.0, 0.3, 0.5, 40.0, 3.0, 1])
+dataDOE = np.array([100.0, 0.3, 0.003, 60.0, 3.0, 1])
 
 # for d in range(np.size(dataDOE, 0)): # loop through DOE for airship parameters
 env = simpy.Environment()
@@ -57,6 +59,28 @@ airshipFleet = [airshipClass.Airship(env, 'RED_%d'%a, airshipAttributes, hub, ci
 
 env.run(until=SimTime)
 
+
+logicDifferences = np.array(airshipFleet[0].SimulationLogic[1:])-np.array(airshipFleet[0].SimulationLogic[0:-1])
+logicDifferences = np.insert(logicDifferences,0,0)
+outputDFL = pd.DataFrame(
+    {
+        "SimulationLogic": airshipFleet[0].SimulationLogic,
+        "Differences": logicDifferences
+    }
+)
+outputDF = pd.DataFrame(
+    {
+        "SimulationTime": airshipFleet[0].SimulationTracker[:,0],
+        "Activity": airshipFleet[0].SimulationTracker[:,1],
+        "Airship": airshipFleet[0].SimulationTracker[:,2],
+        "PayloadLevel": airshipFleet[0].SimulationTracker[:,3],
+        "FuelLevel": airshipFleet[0].SimulationTracker[:,4]
+    }
+)
+
+dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
+# outputDFL.to_csv('SimulationLogic'+dtstr+'.csv')
+outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
 #########################################
 # One airship, Two cities
 
@@ -72,3 +96,5 @@ env.run(until=SimTime)
 #   After sim, subtract each value in the array from the one before it
 #   and if there is anything wrong in the processes, the numbers will 
 #   be something other than 1
+
+# take simulation tracker and make it into a gif of the simulation
