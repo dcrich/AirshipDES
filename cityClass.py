@@ -12,7 +12,9 @@ class City:
         self.AvailableGoods = fruit.DailyCityFruitProduction_TonsPerDay[id] # tons of goods available each day, constant throughout
 
         # people data
+        self.MongerDailySalary = 50
 
+        
         # city capabilities/capacities
         self.LoadingRate = AvgLoadingRate
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
