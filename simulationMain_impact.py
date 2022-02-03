@@ -13,6 +13,8 @@ import airshipClass
 import cityClass
 import hubClass
 import airshipDesignCalculator as ADC
+import ImpactMetrics
+import AirshipCostModel
 
 # One airship, One city
 # Initialize airship, city, simulation
@@ -26,17 +28,17 @@ cityCoordinates = [ [-3.139, -60.248],  # city
                     [-3.387, -60.344],  # city
                     [-3.276, -60.190] ] # city
 # Hub Attributes #
-AvgUnloadingRate = 50.0 # tons/hour
-UnloadingResource = 1
-AvgRepairTime = 0.0
-RepairResource = 1
-AvgRefuelTime = 1.0
-RefuelResource = 1
+# AvgUnloadingRate = 50.0 # tons/hour
+# UnloadingResource = 1
+# AvgRepairTime = 0.0
+# RepairResource = 1
+# AvgRefuelTime = 1.0
+# RefuelResource = 1
 
 # City Attributes #
-AvailableGoods = np.ones(365)*100.0
-AvgLoadingRate = 50.0 # tons/hour
-LoadingResources = 1
+# AvailableGoods = np.ones(365)*100.0
+# AvgLoadingRate = 50.0 # tons/hour
+# LoadingResources = 1
 
 # Airship Attributes #
 # Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
@@ -60,21 +62,13 @@ airshipFleet = [airshipClass.Airship(env, 'RED_%d'%a, airshipAttributes, hub, ci
 env.run(until=SimTime)
 
 
-logicDifferences = np.array(airshipFleet[0].SimulationLogic[1:])-np.array(airshipFleet[0].SimulationLogic[0:-1])
-logicDifferences = np.insert(logicDifferences,0,0)
-outputDFL = pd.DataFrame(
-    {
-        "SimulationLogic": airshipFleet[0].SimulationLogic,
-        "Differences": logicDifferences
-    }
-)
 outputDF = pd.DataFrame(
     {
-        "SimulationTime": airshipFleet[0].SimulationTracker[:,0],
-        "Activity": airshipFleet[0].SimulationTracker[:,1],
-        "Airship": airshipFleet[0].SimulationTracker[:,2],
-        "PayloadLevel": airshipFleet[0].SimulationTracker[:,3],
-        "FuelLevel": airshipFleet[0].SimulationTracker[:,4]
+        "SimulationTime": hub.SimulationTracker[:,0],
+        "Airship": hub.SimulationTracker[:,1],
+        "Activity": hub.SimulationTracker[:,2],
+        "PayloadLevel": hub.SimulationTracker[:,3],
+        "FuelLevel": hub.SimulationTracker[:,4]
     }
 )
 
@@ -82,19 +76,22 @@ dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 # outputDFL.to_csv('SimulationLogic'+dtstr+'.csv')
 outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
 #########################################
-# One airship, Two cities
 
-# One airship, Two cities, Fruit schedule
 
-# One airship, All cities, Fruit schedule
+# One airship, All cities, Fruit schedule - Make new sim file
+
+# Fleet of airships, All cities, Fruit schedule, social impact - make new sim file
 
 
 
 # LEFT OFF:
-# No glaring bugs, Validate simulation logic
-# - for each location have a number that gets saved to an array.
-#   After sim, subtract each value in the array from the one before it
-#   and if there is anything wrong in the processes, the numbers will 
-#   be something other than 1
+# 
 
+
+
+
+
+# Stretch Goal:
 # take simulation tracker and make it into a gif of the simulation
+# - airships move between temporal locations 
+# - airships are an oval ouline and are filled based on payload and fuel levels

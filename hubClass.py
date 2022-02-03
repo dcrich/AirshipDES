@@ -16,4 +16,4 @@ class Hub:
         self.AvgRefuelTime = AvgRefuelTime
         # tracking variables
         self.RecievedGoods = np.zeros(365, dtype=float)
-        
+        self.SimulationTracker = np.zeros((1,5))

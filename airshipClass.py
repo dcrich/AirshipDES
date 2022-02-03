@@ -38,7 +38,7 @@ class Airship:
         # 2 = to_hub
         # 3 = end_day
         self.SimulationLogic = [0]
-        self.SimulationTracker = np.zeros((1,5))
+        
         
         # status variables
         self.StillWorkday = True
@@ -58,7 +58,7 @@ class Airship:
         #print(self.ID + ' starting sim at %.3f'%self.env.now)
         while True: # run until sim is over
             self.SimulationLogic.append(0)
-            self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis = 0)
+            self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis = 0)
             yield self.env.process(self.working())
             self.SimulationLogic.append(3)
             yield self.env.process(self.stop_working())
@@ -66,9 +66,6 @@ class Airship:
 
     def working(self):
         """
-        ?????????????? HOW DOES PAYLOAD AVAILABILTY FACTOR IN ??????????????
-        What happens if city doesn't have any fruit left that day????
-        Make sure it goes back to hub at the end of the day
         """
         self.StillWorkday = bool(self.env.now < self.EndHourWorkday)
         while self.StillWorkday: # work until end of the day
@@ -93,7 +90,7 @@ class Airship:
 
     def stop_working(self):
         #print(self.ID + ' done working at %.2f'%self.env.now)
-        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -6.9, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -6.9, self.PayloadRemaining, self.FuelRemaining]], axis=0)
         self.TimeEndedWorkday[self.CurrentDay] = self.env.now
         self.work_clock()
         timeUntilNextWorkday = self.StartHourWorkday - self.env.now
@@ -115,12 +112,11 @@ class Airship:
 
         # land, load cargo, etc.
         yield self.env.process(self.choose_city_activity())
-        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
 
 
     def city_to_city(self):
         yield self.env.timeout(self.TimeToNextCity)
-
         #print(self.ID + ' arriving at' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
 
         self.CurrentCity = self.NextCity
@@ -130,7 +126,7 @@ class Airship:
 
         # land, load cargo, etc.
         yield self.env.process(self.choose_city_activity())
-        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, self.CurrentCity, self.PayloadRemaining, self.FuelRemaining]], axis=0)
 
     def city_to_hub(self):
         # fly
@@ -144,10 +140,10 @@ class Airship:
         #print(self.ID + ' arriving at Hub at %.2f'%self.env.now)
         self.CurrentLatLon = self.Hub.LatLon
         self.AtHub = True
-        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
         # land, unload cargo, refuel, maintenance, etc.
         yield self.env.process(self.choose_hub_activity())
-        self.SimulationTracker = np.append(self.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
+        self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis=0)
 
 
     def load_cargo(self):
