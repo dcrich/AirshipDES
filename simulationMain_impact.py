@@ -13,7 +13,7 @@ import airshipClass
 import cityClass
 import hubClass
 import airshipDesignCalculator as ADC
-import ImpactMetrics
+import AirshipImpactMetrics
 import AirshipCostModel
 
 # One airship, One city
