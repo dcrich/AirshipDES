@@ -1,15 +1,16 @@
-
+""" CHANGE SO AIRSHIP TIME IS JUST LOADING TIME NOT FLIGHT TIME"""
 import numpy as np
 import AirshipCostModel as acm # or pass in data to functions
 
 # Time Savings
 
 class AirshipImpactMetrics:
-    def __init__(self, airshipFleet, hub, cities, fruit, data):
+    def __init__(self, airshipFleet, hub, cities, fruit, boats, data):
         self.Airships = airshipFleet
         self.Cities = cities
         self.Hub = hub
         self.Fruit = fruit
+        self.Boats = boats
         self.time_savings_impact()
         self.crop_loss_impact()
         self.income_impact()
@@ -44,8 +45,8 @@ class AirshipImpactMetrics:
         for city in self.Cities:
             ProduceSoldWithAirship += self.Fruit.AverageCityFruitValue_RealsPerTon[city.ID] * np.sum(city.LoadedGoods)
         
-        CosttoSellCropWithAirship = SIMULATION # via cost model  --- # what did phil do for this?
-        CosttoSellCropWithoutAirship = DATA # via intermediate calcs
+        CosttoSellCropWithAirship = airshipcosttosell + boatcosttosell#SIMULATION # via cost model  --- # what did phil do for this?
+        CosttoSellCropWithoutAirship = boatcosttosellnoairship # via intermediate calcs
 
 
         self.I_Income = (ProduceSoldWithAirship - CosttoSellCropWithAirship) - (ProduceSoldBeforeAirship - CosttoSellCropWithoutAirship)
@@ -54,9 +55,9 @@ class AirshipImpactMetrics:
     def impact_boat_job_loss(self):
         # base boat people on average amount of fruit loss and demographic data
         # time not loading the airship can be put towards filling the boat?
-        BoatPeopleAfterAirship = SIMULATION
-        BoatPeopleBeforeAirship = DATA
-        self.I_BoatJobLoss = BoatPeopleAfterAirship - BoatPeopleBeforeAirship
+        self.I_BoatJobLoss = 0
+        for boat in self.Boats:
+            self.I_BoatJobLoss -= boat.BoatSurplus
 
 # LEFT OFF:
-# HOW ARE TIME AND COST GETTING CALCULATED????????????
+# and boat calculations to impact calculations

@@ -1,5 +1,8 @@
 """
 Airship Class
+Test Logic: 
+- Picking up old fruit
+- Skipping sundays
 """
 import numpy as np
 import random
@@ -47,6 +50,9 @@ class Airship:
         self.CurrentLatLon = self.Hub.LatLon
         self.NextCity = 0
         self.CurrentCity = 0
+        self.WorkSchedule = np.ones(365)
+        sundayIndex = np.arange(6,365,7)
+        np.put(self.TripsForYear, sundayIndex, np.zeros(np.size(sundayIndex)))
 
         # queue simulation for airship instance
         self.env.process(self.start_working())
@@ -58,9 +64,10 @@ class Airship:
         #print(self.ID + ' starting sim at %.3f'%self.env.now)
         while True: # run until sim is over
             self.SimulationLogic.append(0)
-            self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis = 0)
-            yield self.env.process(self.working())
-            self.SimulationLogic.append(3)
+            if self.WorkSchedule[self.CurrentDay] == 1:
+                self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -1, self.PayloadRemaining, self.FuelRemaining]], axis = 0)
+                yield self.env.process(self.working())
+                self.SimulationLogic.append(3)
             yield self.env.process(self.stop_working())
             
 

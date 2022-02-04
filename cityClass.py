@@ -4,7 +4,7 @@ import simpy
 
 class City:
     """"""
-    def __init__(self, env, id, LatLon, fruit, AvgLoadingRate, LoadingResources):
+    def __init__(self, env, id, LatLon, fruit, boatCount, AvgLoadingRate, LoadingResources):
         self.env = env
         self.LatLon = LatLon
         self.ID = id
@@ -14,10 +14,10 @@ class City:
         # people data
         self.MongerDailySalary = 50
 
-        
         # city capabilities/capacities
         self.LoadingRate = AvgLoadingRate
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
+        self.NumberOfBoats = boatCount
 
         # tracking variables
         self.LoadedGoods = np.zeros(365, dtype=float) # goods taken by the airship, updated daily
