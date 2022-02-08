@@ -30,7 +30,7 @@ class Airship:
         self.PayloadRemaining = airshipAttributes[0]
         self.GoodsTransported = np.zeros(365, dtype=float)
         self.FuelRemaining = airshipAttributes[1]
-        self.FuelUsed = 0.0
+        # self.FuelUsed = 0.0
         self.TimeToNextCity = 0.0
         self.FuelToNextCity = 0.0
         self.TimeUtilized = np.zeros(365,dtype=float)
@@ -53,7 +53,7 @@ class Airship:
         self.WorkSchedule = np.ones(365)
         sundayIndex = np.arange(6,365,7)
         np.put(self.TripsForYear, sundayIndex, np.zeros(np.size(sundayIndex)))
-
+        self.CostToOperate = 0.0
         # queue simulation for airship instance
         self.env.process(self.start_working())
 

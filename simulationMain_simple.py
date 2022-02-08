@@ -14,8 +14,9 @@ import cityClass
 import hubClass
 import airshipDesignCalculator as ADC
 import AirshipImpactMetrics
-import AirshipCostModel
+import AirshipCostModel as ACM
 import fruit
+import BoatModel as BM
 
 # One airship, One city
 # Initialize airship, city, simulation
@@ -23,6 +24,8 @@ import fruit
 # define environment
 random.seed(96)
 SimTime = 365.0 * 24.0 # hours
+WorkdayLength = 8.0
+FruitData = fruit()
 hubCoordinates = [-3.039, -60.048]      # Manaus, BZ
 cityCoordinates = [ [-3.139, -60.248],  # city
                     [-3.441, -60.462],  # city
@@ -62,6 +65,16 @@ airshipFleet = [airshipClass.Airship(env, 'RED_%d'%a, airshipAttributes, hub, ci
 
 env.run(until=SimTime)
 
+# airship cost modeling
+for airship in airshipFleet:
+    ACM.calculate_operational_cost(airship)
+# model boat use
+boats = [BM.Boats(cities[c], WorkdayLength, FruitData)
+                for c in range(len(cityCoordinates))]
+# Calculate Social Impacts
+impactMetrics = AirshipImpactMetrics(airshipFleet, hub, cities, FruitData, boats)
+
+
 
 logicDifferences = np.array(airshipFleet[0].SimulationLogic[1:])-np.array(airshipFleet[0].SimulationLogic[0:-1])
 logicDifferences = np.insert(logicDifferences,0,0)
@@ -94,8 +107,10 @@ outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tr
 
 
 # LEFT OFF:
-# Figuring out what needs to be added to the simulation to calculate social impact
-# Figuring out what additional functions are needed outside the simulation to calculate social impact
+# Finish airship cost function, test it
+# test boat model
+# test simulation
+# test social impact model
 
 
 
