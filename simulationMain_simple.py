@@ -47,7 +47,7 @@ LoadingResources = 1
 # Airship Attributes #
 # Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
 dataDOE = np.array([100.0, 0.3, 0.003, 60.0, 3.0, 1])
-
+FleetSize = dataDOE[5]
 # for d in range(np.size(dataDOE, 0)): # loop through DOE for airship parameters
 env = simpy.Environment()
 
@@ -61,13 +61,13 @@ cities = [cityClass.City(env, 'City_%d'%c, cityCoordinates[c], AvailableGoods, A
 # create airships 
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, 'RED_%d'%a, airshipAttributes, hub, cities)
-                for a in range(int(dataDOE[5]))]
+                for a in range(int(FleetSize))]
 
 env.run(until=SimTime)
 
 # airship cost modeling
 for airship in airshipFleet:
-    ACM.calculate_operational_cost(airship)
+    ACM.calculate_operational_cost(airship,FleetSize)
 # model boat use
 boats = [BM.Boats(cities[c], WorkdayLength, FruitData)
                 for c in range(len(cityCoordinates))]
@@ -107,10 +107,14 @@ outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tr
 
 
 # LEFT OFF:
+# Airship design variables for cost model
+# Get Boat Demographics
 # Finish airship cost function, test it
 # test boat model
 # test simulation
 # test social impact model
+# might need to add constraint for hangars space for fleet
+#   - maybe add environmental impact of forest loss needed for airship storage
 
 
 

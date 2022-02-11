@@ -25,7 +25,13 @@ class Airship:
         self.AirshipVolume_ft = airshipAttributes[3]
         self.CruiseSpeed = airshipAttributes[4]
         
-
+        self.Diameter = airshipAttributes[5]
+        self.Length = airshipAttributes[6]
+        self.CylinderFraction = airshipAttributes[7]
+        self.RequiredHorsepower = airshipAttributes[8]
+        self.Payload = airshipAttributes[9]
+        self.PayloadFraction = airshipAttributes[10]
+        
         # tracking variables
         self.PayloadRemaining = airshipAttributes[0]
         self.GoodsTransported = np.zeros(365, dtype=float)
@@ -43,6 +49,7 @@ class Airship:
         self.SimulationLogic = [0]
         
         
+        
         # status variables
         self.StillWorkday = True
         self.AtHub = True
@@ -53,7 +60,10 @@ class Airship:
         self.WorkSchedule = np.ones(365)
         sundayIndex = np.arange(6,365,7)
         np.put(self.TripsForYear, sundayIndex, np.zeros(np.size(sundayIndex)))
+       
         self.CostToOperate = 0.0
+        self.FuelCost = 0.0
+
         # queue simulation for airship instance
         self.env.process(self.start_working())
 

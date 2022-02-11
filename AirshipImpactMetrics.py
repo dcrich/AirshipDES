@@ -54,13 +54,12 @@ class AirshipImpactMetrics:
         self.I_CropLoss = sumProduceLossWithAirship - CropLossFromData # simplified to what i think it means
 
     # Income
-    def income_impact(self):
+    def income_impact(self):# done, need to test
         ValueProduceSoldBeforeAirship = self.Fruit.TotalGoodsSoldFraction * self.Fruit.TotalProductionValue 
         ValueProduceSoldWithAirshipAndBoat = 0.0
         boatCostToSell = 0.0
         boatCostToSellNoAirship = 0.0
         for i in range(len(self.Cities)):
-            # ProduceSoldWithAirship += np.sum(city.LoadedGoods) * self.Fruit.AverageCityFruitValue_RealsPerTon[city.ID]
             produceSold = np.sum(self.Fruit.DailyCityFruitProduction_TonsPerDay[i]) - np.sum(self.Boats[i].FruitLossAfterBoat)
             ValueProduceSoldWithAirshipAndBoat += produceSold * self.Fruit.AverageCityFruitValue_RealsPerTon[self.Cities[i].ID]
             boatCostToSell += np.sum(self.Boats[i].DailyBoatCostToSell)
@@ -68,18 +67,21 @@ class AirshipImpactMetrics:
         AirshipCostToSell = 0.0
         for airship in self.Airships:
             AirshipCostToSell += airship.CostToOperate
-        CosttoSellCropWithAirship = AirshipCostToSell + boatCostToSell # SIMULATION # via cost model  --- # what did phil do for this?
-        CosttoSellCropWithoutAirship = boatCostToSellNoAirship # via intermediate calcs
+        
+        CosttoSellCropWithAirship = AirshipCostToSell + boatCostToSell 
+        CosttoSellCropWithoutAirship = boatCostToSellNoAirship
 
         self.I_Income = (ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship) - (ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship)
 
     # Displaced boat people
-    def impact_boat_job_loss(self):
-        # base boat people on average amount of fruit loss and demographic data
-        # time not loading the airship can be put towards filling the boat?
+    def impact_boat_job_loss(self): #done, need to test
         self.I_BoatJobLoss = 0.0
         for boat in self.Boats:
             self.I_BoatJobLoss -= boat.BoatSurplus
 
+    def impact_to_forest(self):
+        landmargin = 1.1
+        self.I_ForestLoss = landmargin * np.size(self.Airships) * self.Airships.Footprint
+
 # LEFT OFF:
-# need boat demographics and airship cost function
+# need boat demographics
