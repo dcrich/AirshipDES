@@ -37,7 +37,7 @@ def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
 	
 	# Engine Weight
 	engineHP = 500 # RED A03 v12
-	numberOfEngines = np.ceiling(requiredHorsepower / engineHP)
+	numberOfEngines = np.ceil(requiredHorsepower / engineHP)
 	engineUnitWeight_lbPerHP = 3.086 # Khoury 225-226
 	engineWeight_lb = numberOfEngines * engineHP * engineUnitWeight_lbPerHP # engines
 	# Airship & Structure Weights

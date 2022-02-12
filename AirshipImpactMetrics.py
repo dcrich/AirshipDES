@@ -46,7 +46,7 @@ class AirshipImpactMetrics:
         """
         Crops lost using boat and airship during simulation - Lost crops from data
         """
-        CropLossFromData = self.Fruit.TotalLossFraction * self.Fruit.TotalFruitProuction
+        CropLossFromData = self.Fruit.TotalLossFraction * self.Fruit.TotalFruitProduction
         sumProduceLossWithAirship = 0.0
         for boat in self.Boats:
             sumProduceLossWithAirship += np.sum(boat.FruitLossAfterBoat) 
@@ -61,7 +61,7 @@ class AirshipImpactMetrics:
         boatCostToSellNoAirship = 0.0
         for i in range(len(self.Cities)):
             produceSold = np.sum(self.Fruit.DailyCityFruitProduction_TonsPerDay[i]) - np.sum(self.Boats[i].FruitLossAfterBoat)
-            ValueProduceSoldWithAirshipAndBoat += produceSold * self.Fruit.AverageCityFruitValue_RealsPerTon[self.Cities[i].ID]
+            ValueProduceSoldWithAirshipAndBoat += produceSold * self.Fruit.AverageFruitValueCity_RealsPerTon[self.Cities[i].ID]
             boatCostToSell += np.sum(self.Boats[i].DailyBoatCostToSell)
             boatCostToSellNoAirship += self.Boats[i].BoatCostToSellNoAirship
         AirshipCostToSell = 0.0

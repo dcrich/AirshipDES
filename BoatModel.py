@@ -4,11 +4,11 @@ import numpy as np
 
 
 class Boats:
-    def __init__(self, city, workdayAttributes, fruit):
+    def __init__(self, city, WorkdayTime, fruit):
         self.GoodsSoldNoAirship = fruit.TotalGoodsSoldFraction * fruit.TotalFruitProduction
         self.NumberOfBoats = city.NumberOfBoats
         self.BoatSpeed = 20.0 #knots
-        self.WorkdayTime = workdayAttributes[0]
+        self.WorkdayTime = WorkdayTime
         self.WorkdayTimeForYear = 52.0 * 6.0 * self.WorkdayTime  # weeks per year * days per week * hours per day
         self.Capacity = 1.0 #tons
         self.LoadTime = 0.125 #hours
@@ -50,7 +50,7 @@ class Boats:
         """On the average workday, finds how many boats go unused"""
 
         Workdays = 365 - np.size(np.arange(6,365,7))
-        WorkdailyAverageFruitLoss = np.sum(self.AfterBoatFruitLoss) / Workdays 
+        WorkdailyAverageFruitLoss = np.sum(self.FruitLossAfterBoat) / Workdays 
         TripsPerWorkDay = np.sum(self.MaxTripsForYear) / Workdays
 
         if WorkdailyAverageFruitLoss < 0: 
@@ -66,6 +66,5 @@ class Boats:
         TripsForYear = self.GoodsSoldNoAirship / self.Capacity
         self.BoatTimeNoAirship = self.TripDistance / self.BoatSpeed * TripsForYear + 2.0*self.LoadTime * TripsForYear
         self.BoatCostToSellNoAirship = self.BoatTimeNoAirship * 50.0 / self.WorkdayTime
-
 
 

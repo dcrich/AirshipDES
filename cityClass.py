@@ -9,19 +9,21 @@ import simpy
 
 class City:
     """"""
-    def __init__(self, env, id, LatLon, fruit, boatCount, AvgLoadingRate, LoadingResources):
+    def __init__(self, env, id, LatLon, fruit, FarmerCount, boatCount, CityToHubBoatDistance, AvgLoadingRate, LoadingResources):
         self.env = env
         self.LatLon = LatLon
         self.ID = id
+        self.CityToHubBoatDistance = CityToHubBoatDistance
+        self.FarmerCount = FarmerCount
         # fruit data
-        self.ProducedGoods = fruit.DailyCityFruitProduction_TonsPerDay[id]
+        self.ProducedGoods = fruit.DailyCityFruitProduction_TonsPerDay[id,:]
         self.AvailableGoods = fruit.DailyCityFruitProduction_TonsPerDay[id] # tons of goods available each day, constant throughout
-
+        
         # people data
         self.MongerDailySalary = 50
 
         # city capabilities/capacities
-        self.LoadingRate = AvgLoadingRate
+        self.LoadingRate = AvgLoadingRate * float(self.FarmerCount)
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
         self.NumberOfBoats = boatCount
 
@@ -29,8 +31,7 @@ class City:
         self.LoadedGoods = np.zeros(365, dtype=float) # goods taken by the airship, updated daily
         self.LostGoods = fruit.DailyCityFruitProduction_TonsPerDay[id] # goods not picked up by airship so they go bad, updated daily
         self.LoadingTime = np.zeros(365, dtype=float)
-        self.NumberOfVisits = 0
-        self.DaysMissed = 0
+        self.NumberOfVisits = np.zeros(365, dtype=float)
 
         # boat related
 

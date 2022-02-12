@@ -1,5 +1,4 @@
 # take deisgn parameters and design airship
-from matplotlib import use
 import numpy as np
 
 def DesignAirship(airshipParameters):
@@ -11,8 +10,11 @@ def DesignAirship(airshipParameters):
 
         airshipAttributes = np.zeros(50)
         airshipAttributes[0],airshipAttributes[1]  = calculate_useful_payload(Payload, FuelTankFraction)
-        airshipAttributes[2], airshipAttributes[3] = calculate_size(Payload, PayloadFraction, FinenessRatio)
+        airshipAttributes[2], airshipAttributes[3], airshipAttributes[5], airshipAttributes[6] = calculate_size(Payload, PayloadFraction, FinenessRatio)
         airshipAttributes[4] = CruiseSpeed
+        airshipAttributes[7] = Payload
+        airshipAttributes[8] = PayloadFraction
+        airshipAttributes[9] = FuelTankFraction
 
         return airshipAttributes
 
@@ -37,5 +39,5 @@ def calculate_size(MaxPayload, PayloadFraction, FinenessRatio):
         
         footprint_ft2 = length_ft * diameter_ft
         
-        return footprint_ft2, airshipVolume_ft3
+        return footprint_ft2, airshipVolume_ft3, diameter_ft, length_ft
 
