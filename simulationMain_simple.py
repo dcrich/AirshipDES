@@ -33,7 +33,7 @@ env = simpy.Environment()
 # create hub
 # Hub Attributes #
 hubCoordinates = [-3.039, -60.048]      # Manaus, BZ
-AvgUnloadingRate = 50.0 # tons/hour
+AvgUnloadingRate = 0.05 # hours/ton
 UnloadingResource = 1
 AvgRepairTime = 0.0
 RepairResource = 1
@@ -47,10 +47,10 @@ cityCoordinates = [ [-3.139, -60.248],  # Careiro
                     [-3.441, -60.462],  # Iranduba
                     [-3.387, -60.344],  # Jutai
                     [-3.276, -60.190] ] # Manaquiri
-AvgLoadingRate = 0.6 # tons/hour/farmer, 2 minutes to carry on 40 pounds
+AvgLoadingRate = 0.1 # hours/ton
 LoadingResources = 1
 FarmerCount = [77., 166., 47., 97.]
-boatCount = [5.+5., 7.+28., 7.+4., 12.+7.]
+boatCount = [5., 7., 7., 12.] # [5.+5., 7.+28., 7.+4., 12.+7.] # with manaus boats divided between
 CityToHubBoatDistance =  [8.8, 19.3, 39.1, 48.6] #nautical miles
 cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], boatCount[c], CityToHubBoatDistance[c], AvgLoadingRate, LoadingResources)
                 for c in range(len(cityCoordinates))]
@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
-dataDOE = np.array([10.0, 0.3, 0.03, 60.0, 3.0, 1])
+dataDOE = np.array([22.5, 0.3, 0.3, 60.0, 3.0, 1])
 FleetSize = dataDOE[5]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -110,8 +110,12 @@ outputResults = pd.DataFrame(
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 # outputDFL.to_csv('SimulationLogic'+dtstr+'.csv')
-outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker',)
-outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
+# outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
+# outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
+
+
+
+
 #########################################
 
 
@@ -122,15 +126,12 @@ outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
 
 
 # LEFT OFF:
-# Re-test logic of simulation, esp choose_city and load_cargo
 # Finish airship cost function, test it
 # test boat model
 # test simulation
 # test social impact model
 # might need to add constraint for hangars space for fleet
 #   - maybe add environmental impact of forest loss needed for airship storage
-
-
 
 
 
