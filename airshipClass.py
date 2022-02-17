@@ -3,7 +3,6 @@ Airship Class
 Test Logic: 
 - Re-test logic of simulation, esp choose_city and load_cargo
 """
-import this
 import numpy as np
 import random
 
@@ -37,6 +36,8 @@ class Airship:
         self.Payload = airshipAttributes[7]
         self.PayloadFraction = airshipAttributes[8]
         self.FuelTankFraction = airshipAttributes[9]
+        self.FinenessRatio = airshipAttributes[10]
+        self.FleetSize = airshipAttributes[10]
         
         # tracking variables
         self.PayloadRemaining = airshipAttributes[0]
@@ -195,11 +196,13 @@ class Airship:
         if self.env.now + timeToLoad + self.timeToHubFromNextCity > self.EndHourWorkday: # if it will take to long to load, then load what it can
             timeToLoad = self.EndHourWorkday - self.env.now - self.timeToHubFromNextCity
             goodsLoaded = timeToLoad /  self.Cities[self.CurrentCity].LoadingRate
-            
+        if timeToLoad <0 :
+            stophere = 1
         yield self.env.timeout(timeToLoad)
 
         #print(self.ID + ' done loading at %.2f'%self.env.now)
-
+        if self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] < goodsLoaded:
+            stophere = 1
         self.Cities[self.CurrentCity].NumberOfVisits[self.CurrentDay] += 1
         self.Cities[self.CurrentCity].LoadingTime[self.CurrentDay] += timeToLoad
         self.Cities[self.CurrentCity].LoadedGoods[self.CurrentDay] += goodsLoaded
@@ -212,7 +215,7 @@ class Airship:
                 self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] -= goodsLoaded
         else:
             self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] -= goodsLoaded
-
+        
 
     def unload_cargo(self):
         """
@@ -261,7 +264,6 @@ class Airship:
     # Behavioral/Decision Functions
     def choose_city(self):
         """
-        Add check for payload remaining
         If adding fleets, add check for if city is occupied
         """
         if not self.StillWorkday:
@@ -274,11 +276,12 @@ class Airship:
                     goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay] + self.Cities[self.NextCity].AvailableGoods[self.CurrentDay-1]
                 else:
                     goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay]
-                if self.InRange                                          \
-                    and self.PayloadRemaining > 0.5                      \
-                    and goodsAtCity > 0.5                                \
-                    and self.citiesVisitedInTrip < np.size(self.Cities,0)   \
-                    and not self.CurrentCity == self.NextCity:
+                
+                if self.InRange                                            \
+                   and self.PayloadRemaining > 0.5                         \
+                   and goodsAtCity > 0.5                                   \
+                   and self.citiesVisitedInTrip < np.size(self.Cities,0)   \
+                   and not self.CurrentCity == self.NextCity:
                     self.CitySelected = True
                     self.citiesVisitedInTrip += 1
                     break
@@ -326,8 +329,8 @@ class Airship:
         self.CurrentDay += 1
         self.StartHourWorkday += 24
         self.EndHourWorkday += 24 
-        if self.CurrentDay > 364:
-            stophere = 1
+        # if self.CurrentDay > 364:
+        #     stophere = 1
 
     def calculate_fuel_used(self,cruiseTime):
         # in imperial units
@@ -357,6 +360,7 @@ class Airship:
         # self.Range_km = fuelTankSize_imperial / (safetyFactor * tonsPerMile)
         return fuelUsed
     
+
     def distance_between_coordinates(self, latlon1, latlon2):
         lat1 = latlon1[0] * np.pi / 180
         lon1 = latlon1[1] * np.pi / 180
@@ -365,9 +369,22 @@ class Airship:
         # distance in nm
         distanceBetweenCoord = 6371 * 2 * np.arcsin( np.sqrt( (np.sin((lat1-lat2)/2))**2 + np.cos(lat1)*np.cos(lat2)*(np.sin((lon1-lon2)/2))**2 ))
         
-    
         return distanceBetweenCoord
 
+
     def return_airship_parameters(self):
-        NotImplementedYet = 0
-        return NotImplementedYet
+        return np.array([self.Payload,
+                         self.CruiseSpeed,
+                         self.FleetSize,
+                         self.PayloadFraction,
+                         self.FuelTankFraction,
+                         self.FinenessRatio,
+                         self.CylinderFraction,
+                         self.UsefulPayload,
+                         self.FuelCapacity,
+                         self.AirshipVolume_ft,
+                         self.Diameter,
+                         self.Length,
+                         self.Footprint,
+                         self.RequiredHorsepower
+                         ])

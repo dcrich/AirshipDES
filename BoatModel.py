@@ -1,7 +1,4 @@
-""" Need to Test """
-
 import numpy as np
-
 
 class Boats:
     def __init__(self, city, WorkdayTime, fruit):
@@ -56,6 +53,7 @@ class Boats:
         - needs same boats -> nothing changes
         """
         self.TripsPerDayWithAirship =  np.ceil(self.FruitLoss / self.Capacity) # max number of trips needed to transport fruit lost by airship
+        AverageBoatsNeededWithAirship = np.ceil(np.mean(self.TripsPerDayWithAirship) / self.MaxDailyTripsPerBoat)
         # check if the number of trips is more than the max possible based on max trips
         if np.max(self.TripsPerDayWithAirship) > self.MaxDailyTrips:
             # update trip array to cap at maxtrips
@@ -63,7 +61,7 @@ class Boats:
             self.FruitLossAfterBoat = self.FruitLoss - self.Capacity * self.TripsPerDayWithAirship
             self.UpdatedNumberOfBoats = self.NumberOfBoats
         # check if average number of boats needed is less than all boats
-        elif np.ceil(np.mean(self.TripsPerDayWithAirship) / self.MaxDailyTripsPerBoat) < self.NumberOfBoats:
+        elif AverageBoatsNeededWithAirship < self.NumberOfBoats:
             # update boat count
             self.UpdatedNumberOfBoats = np.ceil(np.mean(self.TripsPerDayWithAirship) / self.MaxDailyTripsPerBoat) 
             self.UpdatedMaxDailyTrips = self.UpdatedNumberOfBoats * self.MaxDailyTripsPerBoat
@@ -72,6 +70,8 @@ class Boats:
         else:
             self.UpdatedNumberOfBoats = self.NumberOfBoats
             self.FruitLossAfterBoat = self.FruitLoss - self.Capacity * self.TripsPerDayWithAirship
+        
+        self.BoatSurplus = self.NumberOfBoats - self.UpdatedNumberOfBoats
         self.FruitLossAfterBoat[self.FruitLossAfterBoat<0] = 0.0   # removes negative values
         self.DailyBoatTime = self.TripDistance / self.BoatSpeed * self.TripsPerDayWithAirship + 2.0*self.LoadTime * self.TripsPerDayWithAirship   # should be zero if airship gets all goods
         boatSalary = 50.0 #Brazilian Reals

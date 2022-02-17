@@ -14,8 +14,8 @@ class fruit:
         JutaiProduction = 0.094446983 * self.DailyFruitProduction
         ManaquiriProduction = 0.158254051 * self.DailyFruitProduction
         # fruit available at each city each day
-        self.DailyCityFruitProduction_TonsPerDay = np.array([CareiroProduction, IrandubaProduction, JutaiProduction, ManaquiriProduction])
-        
+        self.DailyCityFruitProduction_TonsPerDay = np.round(np.array([CareiroProduction, IrandubaProduction, JutaiProduction, ManaquiriProduction]),decimals=3)
+        self.DailyCityFruitProduction_TonsPerDay[self.DailyCityFruitProduction_TonsPerDay < 0.0] = 0.0
         # daily value of fruit produced in each city, fractions from FarmerDataAdjusted.xls, fraction = fraction of value from that city * value of all goods / all goods
         # in brazilian reals
         CareiroValue = 1000 * 0.199304592 #* self.DailyFruitProduction 

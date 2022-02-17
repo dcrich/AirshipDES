@@ -4,10 +4,9 @@ Need to Test
 
 import numpy as np
 
-def calculate_operational_cost(airship, fleetsize):
-    farmerAmortizationFraction = 0.1
-    operationalCostForFarmers = airship_costs(airship,fleetsize,farmerAmortizationFraction)
-    airship.CostToOperate = operationalCostForFarmers
+def calculate_operational_cost(airship, fleetsize, farmerAmortizationFraction=0.1):
+    airship.CostToOperate = airship_costs(airship,fleetsize,farmerAmortizationFraction)
+
 
 def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
 	"""
@@ -71,7 +70,6 @@ def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
 	envelopeFractionOfTotalCost = 0.2-scalingFunction # from Khoury p455 range of 0.1 to 0.2
 	
 	envelopeCost = intermediateAirshipCost * envelopeFractionOfTotalCost / (1-envelopeFractionOfTotalCost)
-	
 
 	# AIRSHIP
 	airshipCostIndividual = envelopeCost + intermediateAirshipCost
@@ -133,7 +131,8 @@ def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
 	# price per thousand to price per ft**3 * hours to days * surface area * volume lost per unit surface area per day
 	heliumRefillCost = heliumPricePerThousandFt3 * 0.001 * totalMissionTimeToClose * 0.0416667 * envelopeSurfaceArea_ft2 * heliumLossPerDay_Ft3perFt2 
 	
-	operationalCostForFarmers = heliumRefillCost + fuelCost + airshipAmortizationCost * percentAmortizationPayedByFarmers
+	USDtoREALS = 5.14 # as of 2/16
+	operationalCostForFarmers = USDtoREALS * (heliumRefillCost + fuelCost + airshipAmortizationCost * percentAmortizationPayedByFarmers)
 	return operationalCostForFarmers
 	# missionCostNoCrew = heliumRefillCost + fuelCost + airshipAmortizationCost + landAmortizationCost + groundHandlingCost # autonomous option
 	# percentHeliumCostAuton = 100*heliumRefillCost/missionCostNoCrew

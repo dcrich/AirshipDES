@@ -1,8 +1,5 @@
 """
 City Class
-Add: 
-- Number of boats per city, assume 60% of boat demogrpahics go to fruit transport
-- City to Hub River Distance in naut miles, maybe change to Time and update boat equations
 """
 import numpy as np
 import simpy
@@ -32,6 +29,3 @@ class City:
         self.LostGoods = fruit.DailyCityFruitProduction_TonsPerDay[id].copy() # goods not picked up by airship so they go bad, updated daily
         self.LoadingTime = np.zeros(365, dtype=float)
         self.NumberOfVisits = np.zeros(365, dtype=float)
-
-        # boat related
-

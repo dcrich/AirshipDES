@@ -1,6 +1,5 @@
 """ CHANGE SO AIRSHIP TIME IS JUST LOADING TIME NOT FLIGHT TIME"""
 import numpy as np
-import AirshipCostModel as acm # or pass in data to functions
 
 # Time Savings
 
@@ -15,14 +14,16 @@ class AirshipImpactMetrics:
         self.I_CropLoss = 0.0
         self.I_Income = 0.0
         self.I_BoatJobLoss = 0.0
+        self.I_ForestLoss = 0.0
         
         self.time_savings_impact()
         self.crop_loss_impact()
         self.income_impact()
         self.impact_boat_job_loss()
+        self.impact_to_forest()
 
 
-    def time_savings_impact(self): # done, need to test
+    def time_savings_impact(self):
         """
         Boat Times: time for farmer to load and unload fruit, go to city and back with one ton of fruit 
             - Initial Boat Time: Boat time for all fruit sold in the year
@@ -39,10 +40,10 @@ class AirshipImpactMetrics:
         for city in self.Cities:
             airshipTime += np.sum(city.LoadingTime) 
 
-        self.I_TimeSavings = boatTimeInitial - (airshipTime + boatTimeAirship)
+        self.I_TimeSavings = boatTimeInitial - (airshipTime + boatTimeAirship) # hours
 
     # Crop Loss
-    def crop_loss_impact(self): # done, need to test
+    def crop_loss_impact(self): 
         """
         Crops lost using boat and airship during simulation - Lost crops from data
         """
@@ -51,10 +52,10 @@ class AirshipImpactMetrics:
         for boat in self.Boats:
             sumProduceLossWithAirship += np.sum(boat.FruitLossAfterBoat) 
 
-        self.I_CropLoss = sumProduceLossWithAirship - CropLossFromData # simplified to what i think it means
+        self.I_CropLoss = sumProduceLossWithAirship - CropLossFromData # imperial tons of fruit
 
     # Income
-    def income_impact(self):# done, need to test
+    def income_impact(self):
         ValueProduceSoldBeforeAirship = self.Fruit.TotalGoodsSoldFraction * self.Fruit.TotalProductionValue 
         ValueProduceSoldWithAirshipAndBoat = 0.0
         boatCostToSell = 0.0
@@ -71,17 +72,21 @@ class AirshipImpactMetrics:
         CosttoSellCropWithAirship = AirshipCostToSell + boatCostToSell 
         CosttoSellCropWithoutAirship = boatCostToSellNoAirship
 
-        self.I_Income = (ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship) - (ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship)
+        self.I_Income = (ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship) - (ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship) # Brazilian Reals
 
     # Displaced boat people
-    def impact_boat_job_loss(self): #done, need to test
+    def impact_boat_job_loss(self):
         self.I_BoatJobLoss = 0.0
         for boat in self.Boats:
-            self.I_BoatJobLoss -= boat.BoatSurplus
+            self.I_BoatJobLoss -= boat.BoatSurplus # people
 
+    # area need to store airships
     def impact_to_forest(self):
         landmargin = 1.1
-        self.I_ForestLoss = landmargin * np.size(self.Airships) * self.Airships.Footprint
+        cumulativeAirshipFootprint = 0.0
+        for airship in self.Airships:
+            cumulativeAirshipFootprint += airship.Footprint
+        self.I_ForestLoss = landmargin * cumulativeAirshipFootprint # ft^2
 
-# LEFT OFF:
-# need boat demographics
+    def return_impact_array(self):
+        return np.array([self.I_BoatJobLoss, self.I_CropLoss, self.I_ForestLoss, self.I_Income, self.I_TimeSavings])

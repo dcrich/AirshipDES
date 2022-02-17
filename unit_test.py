@@ -4,6 +4,7 @@ Unit tests for:
 - Social impact metrics
 
 Run in terminal using command:
+'cd /Users/danada/Coding/AirshipDES'
 'pytest -q unit_test.py'
 OR 
 For detailed output:
@@ -27,7 +28,7 @@ import BoatModel as BM
 def sim_env():
     # define environment
     random.seed(96)
-    SimTime = 365.0 * 24.0 # hours
+    SimTime = 0.1 # 365.0 * 24.0 # hours
     Workday = [8.0,17.0] # start hour, end hour
     FruitData = fp.fruit()
 
@@ -74,48 +75,133 @@ def sim_env():
 
 
 """BOAT TESTS"""
-def test_boat_surplus_with_surplus(sim_env):
+def test_boat_surplus_less_boats(sim_env):
     hub, cities, airshipFleet, FruitData = sim_env
     # change city and fruit data to be checkable
     # set fruit production low so there will definitely be a surplus
-    cities[0].AvailableGoods = np.zeros(np.size(cities[0].AvailableGoods),dtype=float) 
+    cities[1].AvailableGoods = 0.01 * np.ones(np.size(cities[1].AvailableGoods),dtype=float) 
+    sundayIndex = np.arange(6,365,7)
+    np.put(cities[1].AvailableGoods, sundayIndex, np.zeros(np.size(sundayIndex)))
+
+    boat = BM.Boats(cities[1], 8.0, FruitData)
+    correctBoatCount = 1.0
+    correctFruitLossAfterBoat = np.zeros(np.size(cities[1].AvailableGoods),dtype=float)
+
+    assert np.isclose(boat.UpdatedNumberOfBoats, correctBoatCount)
+    assert np.allclose(boat.FruitLossAfterBoat, correctFruitLossAfterBoat) 
+
+
+def test_boat_surplus_more_boats(sim_env):
+    hub, cities, airshipFleet, FruitData = sim_env
+    # change city and fruit data to be checkable
+    # set fruit production twice as much as can be transported by the available boats
+    cities[0].NumberOfBoats = 1.0
+    cities[0].AvailableGoods = 2.0*cities[0].NumberOfBoats * 7.0 * 1.0 * np.ones(np.size(cities[0].AvailableGoods),dtype=float) 
+    sundayIndex = np.arange(6,365,7)
+    np.put(cities[0].AvailableGoods, sundayIndex, np.zeros(np.size(sundayIndex)))
+
     boat = BM.Boats(cities[0], 8.0, FruitData)
-    # maxtripsperday = 70.79646017699113 * np.ones(np.size(cities[0].AvailableGoods),dtype=float) 
-    # sundayIndex = np.arange(6,365,7)
-    # np.put(maxtripsperday, sundayIndex, np.zeros(np.size(sundayIndex)))
-    # FruitLossAfterBoat = -maxtripsperday
     correctBoatCount = cities[0].NumberOfBoats
-    correctFruitLossAfterBoat
+    correctFruitLossAfterBoat = cities[0].NumberOfBoats * 7.0 * 1.0 * np.ones(np.size(cities[0].AvailableGoods),dtype=float)
+    sundayIndex = np.arange(6,365,7)
+    np.put(correctFruitLossAfterBoat, sundayIndex, np.zeros(np.size(sundayIndex)))
 
     assert np.isclose(boat.UpdatedNumberOfBoats, correctBoatCount)
-    """How to compare arrays??"""
-    assert np.isclose(boat.FruitLossAfterBoat, correctFruitLossAfterBoat) 
+    assert np.allclose(boat.FruitLossAfterBoat, correctFruitLossAfterBoat) 
 
-def test_boat_surplus_no_surplus(sim_env):
+
+def test_boat_surplus_same_boats(sim_env):
     hub, cities, airshipFleet, FruitData = sim_env
-    boat = BM.Boats(cities[0], 8.0, FruitData)
-    correctBoatCount
-    correctFruitLossAfterBoat
+    # change city and fruit data to be checkable
+    # set fruit production equal to goods sold without airship
+    cities[0].NumberOfBoats = 1.0
+    cities[0].AvailableGoods = FruitData.CitySoldFraction[0] * FruitData.DailyCityFruitProduction_TonsPerDay[0,:]
+    sundayIndex = np.arange(6,365,7)
+    np.put(cities[0].AvailableGoods, sundayIndex, np.zeros(np.size(sundayIndex)))
 
+    boat = BM.Boats(cities[0], 8.0, FruitData)
+    correctBoatCount = cities[0].NumberOfBoats
+    correctFruitLossAfterBoat = np.zeros(np.size(cities[0].AvailableGoods),dtype=float)
+    sundayIndex = np.arange(6,365,7)
+    np.put(cities[0].AvailableGoods, sundayIndex, np.zeros(np.size(sundayIndex)))
+    
     assert np.isclose(boat.UpdatedNumberOfBoats, correctBoatCount)
-    assert np.isclose(boat.FruitLossAfterBoat, correctFruitLossAfterBoat) 
+    assert np.allclose(boat.FruitLossAfterBoat, correctFruitLossAfterBoat) 
 
 
-def test_boat_usage_after(sim_env):
+def test_boat_usage_boat_used(sim_env):
     hub, cities, airshipFleet, FruitData = sim_env
+    # change city and fruit data to be checkable
+    # set fruit production equal to goods sold without airship
+    cities[0].NumberOfBoats = 1.0
+    cities[0].AvailableGoods = cities[0].NumberOfBoats * 7.0 * 1.0 * np.ones(np.size(cities[0].AvailableGoods),dtype=float)
+    sundayIndex = np.arange(6,365,7)
+    np.put(cities[0].AvailableGoods, sundayIndex, np.zeros(np.size(sundayIndex)))
 
     boat = BM.Boats(cities[0], 8.0, FruitData)
-    correctTripsForYear
-    correctDailyBoatTime
-    assert np.isclose(boat.TripsForYear, correctTripsForYear) 
-    assert np.isclose(boat.DailyBoatTime, correctDailyBoatTime) 
+    correctDailyBoatTime = boat.TripDistance / boat.BoatSpeed * 7.0 + 2.0 *boat.LoadTime * 7.0
 
-def test_boat_usage_prior(sim_env):
+    assert np.isclose(boat.DailyBoatTime[0], correctDailyBoatTime)
+
+
+def test_boat_usage_boat_unused(sim_env):
     hub, cities, airshipFleet, FruitData = sim_env
+    # change city and fruit data to be checkable
+    # set fruit production equal to goods sold without airship
+    cities[0].NumberOfBoats = 1.0
+    cities[0].AvailableGoods = np.zeros(np.size(cities[0].AvailableGoods),dtype=float)
 
     boat = BM.Boats(cities[0], 8.0, FruitData)
+    correctDailyBoatTime = np.zeros(np.size(cities[0].AvailableGoods),dtype=float)
 
-"""AIRSHIP COST TESTS"""
+    assert np.allclose(boat.DailyBoatTime, correctDailyBoatTime)
+
+"""Airship Class TESTS"""
+# Test Candidates:
+# - choose_city
+#     - CitySelected
+#     - NextCity
+# - load_cargo
+#     - yesterdaysGoods
+#     - goodsLoaded
+#     - AvailableGoods
+# - check if citiesVisitedInTrip is getting filled and emptied as expected
+
+def test_choose_city_NotWorkday(sim_env):
+    idk
 
 
-"""IMPACT TESTS"""
+def test_choose_city_NoGoodsAtCity(sim_env):
+    idk
+
+def test_choose_city_PayloadUsed(sim_env):
+    idk
+
+def test_choose_city_AlreadyVisitedAllCities(sim_env):
+    idk
+
+def test_choose_city_SameCity(sim_env):
+    idk
+
+def test_choose_city_NotInRange(sim_env):
+    idk
+
+def test_choose_city_InRange(sim_env):
+    idk
+
+
+def test_in_range_NotInTimeRange(sim_env):
+    idk
+
+def test_in_range_NotInFuelRange(sim_env):
+    idk
+
+def test_in_range_InTimeRange(sim_env):
+    idk
+
+def test_in_range_InFuelRange(sim_env):
+    idk
+
+
+# For using debugger on this file, comment @fixture line, uncomment code below, change to desired function
+# test_boat_surplus_more_boats(sim_env())

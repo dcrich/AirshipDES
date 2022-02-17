@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
-dataDOE = np.array([22.5, 0.3, 0.3, 60.0, 3.0, 1])
+dataDOE = np.array([10.0, 0.3, 0.05, 70.0, 3.0, 1])
 FleetSize = dataDOE[5]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -76,16 +76,8 @@ boats = [BM.Boats(cities[c], Workday[0], FruitData)
 impactMetrics = AIM.AirshipImpactMetrics(airshipFleet, hub, cities, FruitData, boats)
 
 
-
-logicDifferences = np.array(airshipFleet[0].SimulationLogic[1:])-np.array(airshipFleet[0].SimulationLogic[0:-1])
-logicDifferences = np.insert(logicDifferences,0,0)
-outputDFL = pd.DataFrame(
-    {
-        "SimulationLogic": airshipFleet[0].SimulationLogic,
-        "Differences": logicDifferences
-    }
-)
-outputDF = pd.DataFrame(
+# Data by time step, ?by experiment?
+outputTimeSeries = pd.DataFrame(
     {
         "SimulationTime": hub.SimulationTracker[:,0],
         "Airship": hub.SimulationTracker[:,1],
@@ -94,8 +86,11 @@ outputDF = pd.DataFrame(
         "FuelLevel": hub.SimulationTracker[:,4]
     }
 )
-outputResults = pd.DataFrame(
+
+# Data by day, ?by experiment?
+outputByDay = pd.DataFrame(
     {
+        "Simulation Day": np.arange(0,365,1),
         "Production": FruitData.DailyFruitProduction,
         "Careiro Fruit Loss": cities[0].AvailableGoods,
         "Iranduba Fruit Loss": cities[1].AvailableGoods,
@@ -108,6 +103,18 @@ outputResults = pd.DataFrame(
     }
 )
 
+# Data by experiment
+outputImpacts = pd.DataFrame(
+    {
+        "Time Savings": impactMetrics.I_TimeSavings,
+        "Crop Loss": impactMetrics.I_CropLoss,
+        "Income": impactMetrics.I_Income,
+        "Boat Job Loss": impactMetrics.I_BoatJobLoss,
+        "Forest Loss": impactMetrics.I_ForestLoss
+    }
+)
+
+
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 # outputDFL.to_csv('SimulationLogic'+dtstr+'.csv')
 # outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
@@ -116,26 +123,30 @@ dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 
 
 
-#########################################
-
-
+###########################################
 # One airship, All cities, Fruit schedule - Make new sim file
-
 # Fleet of airships, All cities, Fruit schedule, social impact - make new sim file
 
 
 
-# LEFT OFF:
-# Finish airship cost function, test it
-# test boat model
-# test simulation
-# test social impact model
-# might need to add constraint for hangars space for fleet
+
+###########################################
+################ LEFT OFF: ################
+###########################################
+# - Output all data to files, output social impacts to surface plots, check data
+# - might need to add constraint for hangars space for fleet
 #   - maybe add environmental impact of forest loss needed for airship storage
+###########################################
+###########################################
+###########################################
 
 
 
-# Stretch Goal:
-# take simulation tracker and make it into a gif of the simulation
-# - airships move between temporal locations 
-# - airships are an oval ouline and are filled based on payload and fuel levels
+###################################
+########## Stretch Goals: ##########
+###################################
+# - test simulation
+# - output to database, save output time series data for each experiment
+# - take simulation tracker and make it into a gif of the simulation
+#   - airships move between temporal locations 
+#   - airships are an oval ouline and are filled based on payload and fuel levels

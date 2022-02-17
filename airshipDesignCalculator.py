@@ -1,12 +1,14 @@
 # take deisgn parameters and design airship
 import numpy as np
 
+
 def DesignAirship(airshipParameters):
         Payload = airshipParameters[0]
-        PayloadFraction = airshipParameters[1]
-        FuelTankFraction = airshipParameters[2]
-        CruiseSpeed = airshipParameters[3]
-        FinenessRatio = airshipParameters[4]
+        PayloadFraction = airshipParameters[3]
+        FuelTankFraction = airshipParameters[4]
+        CruiseSpeed = airshipParameters[1]
+        FinenessRatio = airshipParameters[5]
+        FleetSize = airshipParameters[2]
 
         airshipAttributes = np.zeros(50)
         airshipAttributes[0],airshipAttributes[1]  = calculate_useful_payload(Payload, FuelTankFraction)
@@ -15,6 +17,8 @@ def DesignAirship(airshipParameters):
         airshipAttributes[7] = Payload
         airshipAttributes[8] = PayloadFraction
         airshipAttributes[9] = FuelTankFraction
+        airshipAttributes[10] = FinenessRatio
+        airshipAttributes[11] = FleetSize
 
         return airshipAttributes
 
@@ -30,7 +34,7 @@ def calculate_fuel_capacity(Payload, FuelTankFraction):
 def calculate_size(MaxPayload, PayloadFraction, FinenessRatio):
         totalLift_lb = 2000 * MaxPayload / PayloadFraction
         liftLbPerCubicFoot = 0.06 # helium
-        specificDensity = 0.81 # at 7000ft
+        specificDensity = 0.95 # at ~1500 ft
         
         airshipVolume_ft3 = (totalLift_lb / liftLbPerCubicFoot) / specificDensity
         
