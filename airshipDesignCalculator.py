@@ -3,13 +3,13 @@ import numpy as np
 
 
 def DesignAirship(airshipParameters):
-        Payload = airshipParameters[0]
+        Payload = round(airshipParameters[0])
+        CruiseSpeed = round(airshipParameters[1])
+        FleetSize = airshipParameters[2]
         PayloadFraction = airshipParameters[3]
         FuelTankFraction = airshipParameters[4]
-        CruiseSpeed = airshipParameters[1]
         FinenessRatio = airshipParameters[5]
-        FleetSize = airshipParameters[2]
-
+       
         airshipAttributes = np.zeros(50)
         airshipAttributes[0],airshipAttributes[1]  = calculate_useful_payload(Payload, FuelTankFraction)
         airshipAttributes[2], airshipAttributes[3], airshipAttributes[5], airshipAttributes[6] = calculate_size(Payload, PayloadFraction, FinenessRatio)
@@ -22,14 +22,17 @@ def DesignAirship(airshipParameters):
 
         return airshipAttributes
 
+
 def calculate_useful_payload(Payload, FuelTankFraction):
         fuel_tons = calculate_fuel_capacity(Payload, FuelTankFraction)
         usefulPayload = Payload - fuel_tons
         return usefulPayload, fuel_tons
 
+
 def calculate_fuel_capacity(Payload, FuelTankFraction):
         fuel_tons = Payload * FuelTankFraction
         return fuel_tons
+
 
 def calculate_size(MaxPayload, PayloadFraction, FinenessRatio):
         totalLift_lb = 2000 * MaxPayload / PayloadFraction

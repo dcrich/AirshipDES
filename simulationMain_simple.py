@@ -57,9 +57,9 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 
 # create airships 
 # Airship Attributes #
-# Airship Parameters: payload, payload fraction, fuel tank fraction, speed, fineness ratio, fleet
-dataDOE = np.array([10.0, 0.3, 0.05, 70.0, 3.0, 1])
-FleetSize = dataDOE[5]
+# Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
+dataDOE = np.array([100.,100.,1,0.3,0.5,3])
+FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
                 for a in range(int(FleetSize))]
@@ -104,15 +104,15 @@ outputByDay = pd.DataFrame(
 )
 
 # Data by experiment
-outputImpacts = pd.DataFrame(
-    {
-        "Time Savings": impactMetrics.I_TimeSavings,
-        "Crop Loss": impactMetrics.I_CropLoss,
-        "Income": impactMetrics.I_Income,
-        "Boat Job Loss": impactMetrics.I_BoatJobLoss,
-        "Forest Loss": impactMetrics.I_ForestLoss
-    }
-)
+# outputImpacts = pd.DataFrame(
+#     {
+#         "Time Savings": impactMetrics.I_TimeSavings,
+#         "Crop Loss": impactMetrics.I_CropLoss,
+#         "Income": impactMetrics.I_Income,
+#         "Boat Job Loss": impactMetrics.I_BoatJobLoss,
+#         "Forest Loss": impactMetrics.I_ForestLoss
+#     }
+# )
 
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")

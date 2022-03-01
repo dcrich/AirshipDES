@@ -4,7 +4,7 @@ Need to Test
 
 import numpy as np
 
-def calculate_operational_cost(airship, fleetsize, farmerAmortizationFraction=0.1):
+def calculate_operational_cost(airship, fleetsize, farmerAmortizationFraction=0.05):
     airship.CostToOperate = airship_costs(airship,fleetsize,farmerAmortizationFraction)
 
 

@@ -39,7 +39,8 @@ class AirshipImpactMetrics:
         airshipTime = 0.0
         for city in self.Cities:
             airshipTime += np.sum(city.LoadingTime) 
-
+        self.AirshipLoadTime = airshipTime
+        
         self.I_TimeSavings = boatTimeInitial - (airshipTime + boatTimeAirship) # hours
 
     # Crop Loss
@@ -49,30 +50,45 @@ class AirshipImpactMetrics:
         """
         CropLossFromData = self.Fruit.TotalLossFraction * self.Fruit.TotalFruitProduction
         sumProduceLossWithAirship = 0.0
-        for boat in self.Boats:
-            sumProduceLossWithAirship += np.sum(boat.FruitLossAfterBoat) 
-
-        self.I_CropLoss = sumProduceLossWithAirship - CropLossFromData # imperial tons of fruit
+        # for boat in self.Boats:
+        #     sumProduceLossWithAirship += np.sum(boat.FruitLossAfterBoat) 
+        for city in self.Cities:
+            sumProduceLossWithAirship += np.sum(city.AvailableGoods)
+        goodsSaved = self.Fruit.TotalFruitProduction - sumProduceLossWithAirship
+        self.I_CropLoss = goodsSaved - CropLossFromData # imperial tons of fruit
+        
 
     # Income
     def income_impact(self):
-        ValueProduceSoldBeforeAirship = self.Fruit.TotalGoodsSoldFraction * self.Fruit.TotalProductionValue 
-        ValueProduceSoldWithAirshipAndBoat = 0.0
+        ValueProduceSoldBeforeAirship = 0.0
+        ValueProduceSoldWithAirship = 0.0
+        ValueProduceSoldWithBoat = 0.0
         boatCostToSell = 0.0
         boatCostToSellNoAirship = 0.0
         for i in range(len(self.Cities)):
-            produceSold = np.sum(self.Fruit.DailyCityFruitProduction_TonsPerDay[i]) - np.sum(self.Boats[i].FruitLossAfterBoat)
-            ValueProduceSoldWithAirshipAndBoat += produceSold * self.Fruit.AverageFruitValueCity_RealsPerTon[self.Cities[i].ID]
+            producedByCity = np.sum(self.Fruit.DailyCityFruitProduction_TonsPerDay[i])
+            lossedByCity = np.sum(self.Cities[i].AvailableGoods)
+            produceSoldByAirship = producedByCity - lossedByCity
+            produceSoldByBoat = np.sum(self.Cities[i].AvailableGoods) - np.sum(self.Boats[i].FruitLossAfterBoat)
+            ValueProduceSoldWithAirship += produceSoldByAirship * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
+            ValueProduceSoldWithBoat += produceSoldByBoat * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
             boatCostToSell += np.sum(self.Boats[i].DailyBoatCostToSell)
             boatCostToSellNoAirship += self.Boats[i].BoatCostToSellNoAirship
+            ValueProduceSoldBeforeAirship += self.Fruit.CitySoldFraction[i] * producedByCity * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
         AirshipCostToSell = 0.0
         for airship in self.Airships:
             AirshipCostToSell += airship.CostToOperate
         
+        ValueProduceSoldWithAirshipAndBoat = ValueProduceSoldWithAirship + ValueProduceSoldWithBoat
         CosttoSellCropWithAirship = AirshipCostToSell + boatCostToSell 
         CosttoSellCropWithoutAirship = boatCostToSellNoAirship
-
-        self.I_Income = (ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship) - (ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship) # Brazilian Reals
+       
+        incomeBefore = ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship
+        incomeAfter = ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship
+        self.AirshipRevenue = ValueProduceSoldWithAirship
+        self.I_Income = incomeAfter - incomeBefore # Brazilian Reals
+        if airship.Payload > 15:
+            stophere = 1
 
     # Displaced boat people
     def impact_boat_job_loss(self):

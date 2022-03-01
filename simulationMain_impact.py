@@ -3,6 +3,7 @@ Simulation
 """
 
 # python libraries
+import os
 import simpy
 import random
 import numpy as np
@@ -18,12 +19,13 @@ import AirshipCostModel as ACM
 import fruit as fp
 import BoatModel as BM
 
-
-DOE_filename = "AirshipDesigns.txt" #DONE
+# DOE_filename = "AirshipDesignsTest.txt"
+DOE_filename = "AirshipDesignsTestFleet.txt" 
 DOE = pd.read_csv(DOE_filename) #load DOE data
 AirshipDesigns = DOE.values
-AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),14),dtype=float)
+AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),15),dtype=float)
 ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
+RevenueLoadTime = np.zeros((np.size(AirshipDesigns,0),2),dtype=float)
 counter = 0 
 for dataDOE in AirshipDesigns:
     # define environment
@@ -36,21 +38,21 @@ for dataDOE in AirshipDesigns:
 
     # create hub
     # Hub Attributes #
-    hubCoordinates = [-3.039, -60.048]      # Manaus, BZ
+    hubCoordinates = [-3.117, -60.025]      # Manaus, BZ
     AvgUnloadingRate = 0.05 # hours/ton
     UnloadingResource = 1
     AvgRepairTime = 0.0
     RepairResource = 1
-    AvgRefuelTime = 1.0
+    AvgRefuelTime = 0.5
     RefuelResource = 1
     hub = hubClass.Hub(env, hubCoordinates, AvgUnloadingRate, UnloadingResource, AvgRepairTime, RepairResource, AvgRefuelTime, RefuelResource)
 
     # create cities
     # City Attributes #
-    cityCoordinates = [ [-3.139, -60.248],  # Careiro
-                        [-3.441, -60.462],  # Iranduba
+    cityCoordinates = [ [-3.196, -59.826],  # Careiro
+                        [-3.276, -60.190],  # Iranduba
                         [-3.387, -60.344],  # Jutai
-                        [-3.276, -60.190] ] # Manaquiri
+                        [-3.441, -60.462]]  # Manaquiri
     AvgLoadingRate = 0.1 # hours/ton
     LoadingResources = 1
     FarmerCount = [77., 166., 47., 97.]
@@ -61,6 +63,7 @@ for dataDOE in AirshipDesigns:
 
     # create airships 
     # Airship Attributes #
+    dataDOE[2] = round(dataDOE[2])
     FleetSize = dataDOE[2]
     airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
     airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -79,6 +82,8 @@ for dataDOE in AirshipDesigns:
 
     AirshipDesignParameterTracker[counter,:] = airshipFleet[0].return_airship_parameters()
     ImpactTracker[counter,:] = impactMetrics.return_impact_array()
+    RevenueLoadTime[counter,0] = impactMetrics.AirshipRevenue
+    RevenueLoadTime[counter,1] = impactMetrics.AirshipLoadTime
     counter += 1
 
 
@@ -100,53 +105,27 @@ outputImpacts = pd.DataFrame(
         "Length": AirshipDesignParameterTracker[:,11],
         "Footprint": AirshipDesignParameterTracker[:,12],
         "RequiredHorsepower": AirshipDesignParameterTracker[:,13],
+        "Range": AirshipDesignParameterTracker[:,14],
         "Boat Job Loss": ImpactTracker[:,0],
         "Crop Loss": ImpactTracker[:,1],
-        "Income": ImpactTracker[:,2],
-        "Forest Loss": ImpactTracker[:,3],
-        "Time Savings": ImpactTracker[:,4]
+        "Forest Loss": ImpactTracker[:,2],
+        "Income": ImpactTracker[:,3],
+        "Time Savings": ImpactTracker[:,4],
+        "Airship Revenue": RevenueLoadTime[:,0],
+        "Airship Load Time": RevenueLoadTime[:,1]
     }
 )
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 outputImpacts.to_csv('ExperimentImpacts'+dtstr+'.csv')
 
-
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator
-
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-
-# Make data.
-X = AirshipDesignParameterTracker[:,0]
-Y = AirshipDesignParameterTracker[:,1]
-
-Z = ImpactTracker[:,2]
-
-# Plot the surface.
-surf = ax.plot_trisurf(X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-# Customize the z axis.
-ax.set_zlim(np.min(Z), np.max(Z))
-ax.zaxis.set_major_locator(LinearLocator(10))
-# A StrMethodFormatter is used automatically
-ax.zaxis.set_major_formatter('{x:.0f}')
-
-ax = fig.gca(projection='3d')
-ax.set_xlabel('Payload')
-ax.set_ylabel('Speed')
-ax.set_zlabel('Time Savings')
-
-# # Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
-plt.show()
+os.system(f'say -v {"Fiona"} {"I am done computing."}')
 
 ###########################################
 ################ LEFT OFF: ################
 ###########################################
-# - Output all data to files, output social impacts to surface plots, check data
-# - might need to add constraint for hangars space for fleet
-#   - maybe add environmental impact of forest loss needed for airship storage
+# rethink crop loss logic. rn ranges from prior loss to ?
+# test fleets
 ###########################################
 ###########################################
 ###########################################
@@ -161,3 +140,5 @@ plt.show()
 # - take simulation tracker and make it into a gif of the simulation
 #   - airships move between temporal locations 
 #   - airships are an oval ouline and are filled based on payload and fuel levels
+
+
