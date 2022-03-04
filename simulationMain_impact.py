@@ -1,9 +1,13 @@
 """
 Simulation
+- Sundays are included
+- no random numbers
 """
 
 # python libraries
+from itertools import count
 import os
+import time
 import simpy
 import random
 import numpy as np
@@ -18,15 +22,21 @@ import AirshipImpactMetrics as AIM
 import AirshipCostModel as ACM
 import fruit as fp
 import BoatModel as BM
+from generatorDOE import generate_designs
 
 # DOE_filename = "AirshipDesignsTest.txt"
-DOE_filename = "AirshipDesignsTestFleet.txt" 
-DOE = pd.read_csv(DOE_filename) #load DOE data
-AirshipDesigns = DOE.values
+# DOE_filename = "AirshipDesigns750fleet.txt" 
+# DOE = pd.read_csv(DOE_filename) #load DOE data
+# AirshipDesigns = DOE.values
+AirshipDesigns, payloadG, speedG, fleetG, payloadfraction, fueltankfraction, finenessratio = generate_designs(setsize=100)
+
+AirshipDesigns[0,0:3] =  np.array([6.0, 30.0, 2])
+
 AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),15),dtype=float)
 ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
-RevenueLoadTime = np.zeros((np.size(AirshipDesigns,0),2),dtype=float)
+OtherOuputs = np.zeros((np.size(AirshipDesigns,0),10),dtype=float)
 counter = 0 
+tic = time.perf_counter()
 for dataDOE in AirshipDesigns:
     # define environment
     random.seed(96)
@@ -79,11 +89,24 @@ for dataDOE in AirshipDesigns:
                     for c in range(len(cityCoordinates))]
     # Calculate Social Impacts
     impactMetrics = AIM.AirshipImpactMetrics(airshipFleet, hub, cities, FruitData, boats)
-
+    fuelUsed = 0.0
+    totalTrips = 0
+    for airship in airshipFleet:
+        fuelUsed += np.sum(airship.DailyFuelConsumption)
+        totalTrips += airship.citiesVisitedInTotal
     AirshipDesignParameterTracker[counter,:] = airshipFleet[0].return_airship_parameters()
     ImpactTracker[counter,:] = impactMetrics.return_impact_array()
-    RevenueLoadTime[counter,0] = impactMetrics.AirshipRevenue
-    RevenueLoadTime[counter,1] = impactMetrics.AirshipLoadTime
+    OtherOuputs[counter,0] = impactMetrics.AirshipRevenue
+    OtherOuputs[counter,1] = impactMetrics.AirshipLoadTime
+    OtherOuputs[counter,2] = impactMetrics.produceSoldByAllBoats #sold by boat
+    OtherOuputs[counter,3] = impactMetrics.BoatTripLoss
+    OtherOuputs[counter,4] = fuelUsed
+    OtherOuputs[counter,5] = totalTrips
+    OtherOuputs[counter,6] = np.sum(cities[0].AvailableGoods) #Careiro
+    OtherOuputs[counter,7] = np.sum(cities[1].AvailableGoods) #Iranduba
+    OtherOuputs[counter,8] = np.sum(cities[2].AvailableGoods) #Jutai
+    OtherOuputs[counter,9] = np.sum(cities[3].AvailableGoods) #Manaquiri
+
     counter += 1
 
 
@@ -111,21 +134,37 @@ outputImpacts = pd.DataFrame(
         "Forest Loss": ImpactTracker[:,2],
         "Income": ImpactTracker[:,3],
         "Time Savings": ImpactTracker[:,4],
-        "Airship Revenue": RevenueLoadTime[:,0],
-        "Airship Load Time": RevenueLoadTime[:,1]
+        "Airship Revenue": OtherOuputs[:,0],
+        "Airship Load Time": OtherOuputs[:,1],
+        "Transported By Boat": OtherOuputs[:,2],
+        "Boat Trip Loss": OtherOuputs[:,3],
+        "Fuel Used": OtherOuputs[:,4],
+        "Total Trips": OtherOuputs[:,5],
+        "Lost Careio": OtherOuputs[:,6],
+        "Lost Iranduba": OtherOuputs[:,7],
+        "Lost Jutai": OtherOuputs[:,8],
+        "Lost Manaquiri": OtherOuputs[:,9]
     }
 )
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
 outputImpacts.to_csv('ExperimentImpacts'+dtstr+'.csv')
+toc = time.perf_counter()
 
 os.system(f'say -v {"Fiona"} {"I am done computing."}')
+timeToRun = (toc-tic)/60.0
+if timeToRun < 60:
+    print(timeToRun)
+    print('Minutes')
+else:
+    print(timeToRun/60.0)
+    print('Hours')
 
 ###########################################
 ################ LEFT OFF: ################
 ###########################################
-# rethink crop loss logic. rn ranges from prior loss to ?
-# test fleets
+# Bugs when visiting multiple cities
+#   - How can the airships know if another airship is already enroute and will pick up the cargo?
 ###########################################
 ###########################################
 ###########################################

@@ -1,6 +1,8 @@
 """
 Airship Class
+- make inrange calculation use TripPayloadThreshold in load time estimate
 """
+from ast import Raise
 import numpy as np
 import random
 
@@ -15,10 +17,12 @@ class Airship:
         self.Hub = hub
         self.Cities = cities
         self.maxfruit = np.zeros(4)
-        i = 0
-        for city in cities:
-            self.maxfruit[i] = np.mean(city.AvailableGoods)
-            i += 1
+        self.TripPayloadThreshold = 0.5
+        self.TripCityGoodsThreshold = 0.5
+        # i = 0
+        # for city in cities:
+        #     self.maxfruit[i] = np.mean(city.AvailableGoods)
+        #     i += 1
 
         # airship design parameters
         self.UsefulPayload = airshipAttributes[0]
@@ -38,12 +42,12 @@ class Airship:
         
         # tracking variables
         self.PayloadRemaining = airshipAttributes[0]
-        self.GoodsTransported = np.zeros(365, dtype=float)
+        # self.GoodsTransported = np.zeros(365, dtype=float)
         self.FuelRemaining = airshipAttributes[1]
         # self.FuelUsed = 0.0
         self.TimeToNextCity = 0.0
         self.FuelToNextCity = 0.0
-        self.TimeUtilized = np.zeros(365,dtype=float)
+        # self.TimeUtilized = np.zeros(365,dtype=float)
         self.TimeEndedWorkday = np.zeros(365,dtype=float)
         self.DailyFuelConsumption = np.zeros(365,dtype=float)
         self.SimulationLogic = [0] # 0 = start working, 1 = to_city, 2 = to_hub, 3 = end_day
@@ -59,6 +63,7 @@ class Airship:
         sundayIndex = np.arange(6,365,7)
         # np.put(self.WorkSchedule, sundayIndex, np.zeros(np.size(sundayIndex)))
         self.citiesVisitedInTrip = 0
+        self.citiesVisitedInTotal = 0
 
         self.CostToOperate = 0.0
         self.FuelCost = 0.0
@@ -114,13 +119,10 @@ class Airship:
         timeUntilNextWorkday = self.StartHourWorkday - self.env.now
         self.NextCity = 0 # start each day trying to go to city 1
         self.CurrentCity = 0
-        yield self.env.timeout(timeUntilNextWorkday) # do nothing working until next day
+        """DOES THIS AFFECT THE OTHER AIRSHIP INSTANCE???????????????????????????????"""
+        yield self.env.timeout(timeUntilNextWorkday) # do nothing working until next day 
         
     def hub_to_city(self):
-        """
-        Maybe store in airship the order of cities visited each day
-        """
-        # if fleet, incorporate resource, add 'waiting'
         # fly
         yield self.env.timeout(self.TimeToNextCity)
         #print(self.ID + ' arriving at ' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
@@ -135,9 +137,9 @@ class Airship:
 
 
     def city_to_city(self):
+        # fly
         yield self.env.timeout(self.TimeToNextCity)
         #print(self.ID + ' arriving at' + self.Cities[self.CurrentCity].ID + ' at %.2f'%self.env.now)
-
         self.CurrentCity = self.NextCity
         self.CurrentLatLon = self.Cities[self.CurrentCity].LatLon
         self.AtHub = False
@@ -179,34 +181,36 @@ class Airship:
         goodsToLoad = self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] + yesterdaysGoods
         if goodsToLoad > self.PayloadRemaining:
             goodsLoaded = self.PayloadRemaining  #* random.random()
-            self.PayloadRemaining -= goodsLoaded
         else:
             goodsLoaded = goodsToLoad  #* random.random()
-            self.PayloadRemaining -= goodsLoaded
         timeToLoad = goodsLoaded * self.Cities[self.CurrentCity].LoadingRate
         
         if self.env.now + timeToLoad + self.timeToHubFromNextCity > self.EndHourWorkday: # if it will take to long to load, then load what it can
             timeToLoad = self.EndHourWorkday - self.env.now - self.timeToHubFromNextCity
             goodsLoaded = timeToLoad /  self.Cities[self.CurrentCity].LoadingRate
+            if goodsLoaded > self.PayloadRemaining:
+                goodsLoaded = self.PayloadRemaining
         if timeToLoad < 0 :
             raise Exception("Negative Load Time")
-        
+        elif np.isclose(timeToLoad,0.0):
+            # raise Exception("Went To City But Didn't Load")
+            stophere = 1
+        self.citiesVisitedInTotal += 1
+
+        self.Cities[self.CurrentCity].EstimatedAvailableGoods[self.CurrentDay] -= goodsLoaded #update available goods so other airships know how much is available
+        self.PayloadRemaining -= goodsLoaded
+
         startwait = self.env.now
-        with self.Cities[self.CurrentCity].LoadingResource.request() as loadReq:
+        with self.Cities[self.CurrentCity].LoadingResource.request() as loadReq: #everything within resource so airships don't load goods before their turn
             yield loadReq
             loadWaitTime = self.env.now - startwait
             self.wait(loadWaitTime)
             yield self.env.timeout(timeToLoad)
-        
-            # reset city occupied status depending on how occupied
-            if self.Cities[self.NextCity].CurrentlyOverOccupied:
-                self.Cities[self.NextCity].CurrentlyOverOccupied = 0
-            else:
-                self.Cities[self.NextCity].CurrentlyOccupied = 0
-            
+
             #print(self.ID + ' done loading at %.2f'%self.env.now)
-            if self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] < goodsLoaded:
-                stophere = 1
+            if goodsLoaded > goodsToLoad or self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] + yesterdaysGoods < goodsLoaded:
+                raise Exception("More Goods Loaded Than Were Available")
+
             self.Cities[self.CurrentCity].NumberOfVisits[self.CurrentDay] += 1
             self.Cities[self.CurrentCity].LoadingTime[self.CurrentDay] += timeToLoad
             self.Cities[self.CurrentCity].LoadedGoods[self.CurrentDay] += goodsLoaded
@@ -219,7 +223,10 @@ class Airship:
                     self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] -= goodsLoaded
             else:
                 self.Cities[self.CurrentCity].AvailableGoods[self.CurrentDay] -= goodsLoaded
-        
+            
+            # reset city occupied status depending on how occupied
+            self.Cities[self.NextCity].CurrentlyOccupied -= 1
+            self.Cities[self.CurrentCity].EstimatedAvailableGoods = self.Cities[self.CurrentCity].AvailableGoods.copy() # update estimate to match actual
 
     def unload_cargo(self):
         """
@@ -239,6 +246,7 @@ class Airship:
             self.PayloadRemaining = self.UsefulPayload
             self.Hub.RecievedGoods[self.CurrentDay] += goodsUnloaded
 
+
     def refuel(self):
         """
         - Make time to refuel be from a distribution
@@ -249,7 +257,10 @@ class Airship:
             #print(self.ID + ' done refueling at %.2f'%self.env.now)
             fuelUsed = self.FuelCapacity - self.FuelRemaining
             self.DailyFuelConsumption[self.CurrentDay] += fuelUsed
+            if self.FuelRemaining < 0:
+                raise Exception("Ran Out of Fuel")
             self.FuelRemaining = self.FuelCapacity
+
 
     def maintenance_check(self):
         """
@@ -276,7 +287,6 @@ class Airship:
     def choose_city(self):
         """
         """
-
         if not self.StillWorkday:
             self.CitySelected = False
         else:
@@ -284,44 +294,44 @@ class Airship:
                 self.next_city()
                 self.in_range()
                 if self.CurrentDay > 0:
-                    goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay] + self.Cities[self.NextCity].AvailableGoods[self.CurrentDay-1]
+                    self.goodsAtCity = self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay] + self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay-1]
                 else:
-                    goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay]
+                    self.goodsAtCity = self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay]
                 
                 if self.InRange                                            \
-                   and not self.Cities[self.NextCity].CurrentlyOccupied   \
-                   and self.PayloadRemaining > 0.5                         \
-                   and goodsAtCity > 0.5                                   \
+                   and not self.Cities[self.NextCity].CurrentlyOccupied    \
+                   and self.PayloadRemaining > self.TripPayloadThreshold                        \
+                   and self.goodsAtCity > self.TripCityGoodsThreshold                                   \
                    and self.citiesVisitedInTrip < np.size(self.Cities,0)   \
                    and not self.CurrentCity == self.NextCity:
                     self.CitySelected = True
-                    self.Cities[self.NextCity].CurrentlyOccupied = 1
+                    self.Cities[self.NextCity].CurrentlyOccupied += 1
                     self.citiesVisitedInTrip += 1
                     break
                 else:
                     self.CitySelected = False
-            # # if no city selected, can go to occupied city, but not over occupied city
-            # if not self.CitySelected:
-            #     for i in range(len(self.Cities)):
-            #         self.next_city()
-            #         self.in_range()
-            #         if self.CurrentDay > 0:
-            #             goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay] + self.Cities[self.NextCity].AvailableGoods[self.CurrentDay-1]
-            #         else:
-            #             goodsAtCity = self.Cities[self.NextCity].AvailableGoods[self.CurrentDay]
+            # if no city selected, can go to occupied city
+            if not self.CitySelected:
+                for i in range(len(self.Cities)):
+                    self.next_city()
+                    self.in_range()
+                    if self.CurrentDay > 0:
+                        self.goodsAtCity = self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay] + self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay-1]
+                    else:
+                        self.goodsAtCity = self.Cities[self.NextCity].EstimatedAvailableGoods[self.CurrentDay]
                     
-            #         if self.InRange                                                \
-            #            and not self.Cities[self.NextCity].CurrentlyOverOccupied   \
-            #            and self.PayloadRemaining > 0.5                             \
-            #            and goodsAtCity > 0.5                                       \
-            #            and self.citiesVisitedInTrip < np.size(self.Cities,0)       \
-            #            and not self.CurrentCity == self.NextCity:
-            #             self.CitySelected = True
-            #             self.Cities[self.NextCity].CurrentlyOverOccupied = 1
-            #             self.citiesVisitedInTrip += 1
-            #             break
-            #         else:
-            #             self.CitySelected = False
+                    if self.InRange                                                \
+                       and self.PayloadRemaining > self.TripPayloadThreshold                            \
+                       and self.goodsAtCity > self.TripCityGoodsThreshold                                       \
+                       and self.citiesVisitedInTrip < np.size(self.Cities,0)       \
+                       and not self.CurrentCity == self.NextCity:
+                    #  and not self.Cities[self.NextCity].CurrentlyOverOccupied    \
+                        self.CitySelected = True
+                        self.Cities[self.NextCity].CurrentlyOccupied += 1
+                        self.citiesVisitedInTrip += 1
+                        break
+                    else:
+                        self.CitySelected = False
     
     
     def next_city(self):

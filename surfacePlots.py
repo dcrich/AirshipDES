@@ -6,7 +6,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from scipy.interpolate import griddata
 
-data_filename = "ExperimentImpacts2022-02-28_07-49-41-PM.csv"
+data_filename = "ExperimentImpacts2022-03-01_10-22-02-AM.csv"
 data = pd.read_csv(data_filename)
 surfaceColor = cm.turbo
 

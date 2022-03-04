@@ -13,9 +13,9 @@ class City:
         self.CityToHubBoatDistance = CityToHubBoatDistance
         self.FarmerCount = FarmerCount
         # fruit data
-        self.ProducedGoods = fruit.DailyCityFruitProduction_TonsPerDay[id,:].copy()
+        # self.ProducedGoods = fruit.DailyCityFruitProduction_TonsPerDay[id,:].copy()
         self.AvailableGoods = fruit.DailyCityFruitProduction_TonsPerDay[id].copy() # tons of goods available each day, constant throughout
-        
+        self.EstimatedAvailableGoods = fruit.DailyCityFruitProduction_TonsPerDay[id].copy()
         # people data
         self.MongerDailySalary = 50
 
@@ -31,3 +31,4 @@ class City:
         self.NumberOfVisits = np.zeros(365, dtype=float)
         self.CurrentlyOccupied = 0
         self.CurrentlyOverOccupied = 0
+        

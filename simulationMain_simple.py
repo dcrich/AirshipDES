@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
-dataDOE = np.array([100.,100.,1,0.3,0.5,3])
+dataDOE = np.array([6.,30.,2.0,0.3,0.05,3])
 FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -99,9 +99,12 @@ outputByDay = pd.DataFrame(
         "Careiro Visits": cities[0].NumberOfVisits,
         "Iranduba Visits": cities[1].NumberOfVisits,
         "Jutai Visits": cities[2].NumberOfVisits,
-        "Manaquiri Visits": cities[3].NumberOfVisits
+        "Manaquiri Visits": cities[3].NumberOfVisits,
+        "Airship 0 End Workday": airshipFleet[0].TimeEndedWorkday,
+        "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday
     }
 )
+
 
 # Data by experiment
 # outputImpacts = pd.DataFrame(
@@ -116,7 +119,7 @@ outputByDay = pd.DataFrame(
 
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
-# outputDFL.to_csv('SimulationLogic'+dtstr+'.csv')
+outputByDay.to_csv('outputByDay'+dtstr+'.csv')
 # outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
 # outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
 
