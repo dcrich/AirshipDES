@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 def generate_designs(payloadrange=[1,31], speedrange=[20,101], fleetrange=[1,6], setsize = 100):
     if setsize == 100:
         payload = np.arange(payloadrange[0],payloadrange[1], 2)
-        speed = np.arange(speedrange[0], speedrange[1], 5)
+        speed = np.arange(speedrange[0], speedrange[1], 2)
         fleet = np.arange(fleetrange[0],fleetrange[1], 1)
     else:
         payload = np.arange(payloadrange[0],payloadrange[1], 1)

@@ -44,9 +44,9 @@ hub = hubClass.Hub(env, hubCoordinates, AvgUnloadingRate, UnloadingResource, Avg
 # create cities
 # City Attributes #
 cityCoordinates = [ [-3.139, -60.248],  # Careiro
-                    [-3.441, -60.462],  # Iranduba
-                    [-3.387, -60.344],  # Jutai
-                    [-3.276, -60.190] ] # Manaquiri
+                    [-3.441, -60.462]]#,  # Iranduba
+                    # [-3.387, -60.344],  # Jutai
+                    # [-3.276, -60.190] ] # Manaquiri
 AvgLoadingRate = 0.1 # hours/ton
 LoadingResources = 1
 FarmerCount = [77., 166., 47., 97.]
@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
-dataDOE = np.array([6.,30.,2.0,0.3,0.05,3])
+dataDOE = np.array([5.,50.,2.0,0.3,0.05,3])
 FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -88,22 +88,30 @@ outputTimeSeries = pd.DataFrame(
 )
 
 # Data by day, ?by experiment?
-outputByDay = pd.DataFrame(
-    {
-        "Simulation Day": np.arange(0,365,1),
-        "Production": FruitData.DailyFruitProduction,
-        "Careiro Fruit Loss": cities[0].AvailableGoods,
-        "Iranduba Fruit Loss": cities[1].AvailableGoods,
-        "Jutai Fruit Loss": cities[2].AvailableGoods,
-        "Manaquiri Fruit Loss": cities[3].AvailableGoods,
-        "Careiro Visits": cities[0].NumberOfVisits,
-        "Iranduba Visits": cities[1].NumberOfVisits,
-        "Jutai Visits": cities[2].NumberOfVisits,
-        "Manaquiri Visits": cities[3].NumberOfVisits,
-        "Airship 0 End Workday": airshipFleet[0].TimeEndedWorkday,
-        "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday
-    }
-)
+# outputByDay = pd.DataFrame(
+#     {
+#         "Simulation Day": np.arange(0,365,1),
+#         "Production": FruitData.DailyFruitProduction,
+#         "Careiro Fruit Loss": cities[0].AvailableGoods,
+#         "Iranduba Fruit Loss": cities[1].AvailableGoods,
+#         "Jutai Fruit Loss": cities[2].AvailableGoods,
+#         "Manaquiri Fruit Loss": cities[3].AvailableGoods,
+#         "Careiro Visits": cities[0].NumberOfVisits,
+#         "Iranduba Visits": cities[1].NumberOfVisits,
+#         "Jutai Visits": cities[2].NumberOfVisits,
+#         "Manaquiri Visits": cities[3].NumberOfVisits,
+#         "Careiro Load Time": cities[0].LoadingTime,
+#         "Iranduba Load Time": cities[1].LoadingTime,
+#         "Jutai Load Time": cities[2].LoadingTime,
+#         "Manaquiri Load Time": cities[3].LoadingTime,
+#         "Careiro Loaded Goods": cities[0].LoadedGoods,
+#         "Iranduba Loaded Goods": cities[1].LoadedGoods,
+#         "Jutai Loaded Goods": cities[2].LoadedGoods,
+#         "Manaquiri Loaded Goods": cities[3].LoadedGoods,
+#         "Airship 0 End Workday": airshipFleet[0].TimeEndedWorkday,
+#         "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday
+#     }
+# )
 
 
 # Data by experiment
@@ -119,7 +127,7 @@ outputByDay = pd.DataFrame(
 
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
-outputByDay.to_csv('outputByDay'+dtstr+'.csv')
+outputTimeSeries.to_csv('outputTimeSeries'+dtstr+'.csv')
 # outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
 # outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
 

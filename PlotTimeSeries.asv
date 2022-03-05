@@ -1,0 +1,38 @@
+file = uigetfile('*.csv');
+output = readtable(file);
+file2 = uigetfile('*.csv');
+output2 = readtable(file2);
+
+airship10 = find(output.Airship == 0);
+airship11 = find(output.Airship == 1);
+SimulationTime_1 = output.SimulationTime(airship10);
+SimulationTime_2 = output.SimulationTime(airship11);
+airship20 = find(output2.Airship == 0);
+airship21 = find(output2.Airship == 1);
+SimulationTime_3 = output2.SimulationTime(airship20);
+SimulationTime_4 = output2.SimulationTime(airship21);
+
+PayloadLevel_1 = 
+PayloadLevel_2 = 
+PayloadLevel_3 = 
+PayloadLevel_4 = 
+
+figure(1)
+plot(output.SimulationTime,output.PayloadLevel, 'r')
+hold on
+plot(output.SimulationTime_1,output.PayloadLevel_1, 'g')
+plot(output.SimulationTime_2,output.PayloadLevel_2, 'b')
+plot(output.SimulationTime_3,output.PayloadLevel_3, 'k')
+legend('27-0','27-1','26-0','26-1')
+hold off
+
+
+
+figure(2)
+plot(output.SimulationTime,output.Activity, 'r')
+hold on
+plot(output.SimulationTime_1,output.Activity_1, 'g')
+plot(output.SimulationTime_2,output.Activity_2, 'b')
+plot(output.SimulationTime_3,output.Activity_3, 'k')
+legend('27-0','27-1','26-0','26-1')
+hold off

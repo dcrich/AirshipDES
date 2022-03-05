@@ -1,11 +1,13 @@
 warning off
 % how to optimize with jumps due to fleet size
 % how to explain spikes due to stochastic natural of simulation
-if exist('uniform12149.mat','file')
+if false %exist('uniform12149.mat','file')
     load uniform12149.mat
 else
 %     steps = [1,1,1];
-    steps = [5,10,1];
+    steps = [2,2,1];
+%     steps = [3,5,1];
+%     steps = [5,10,1];
     file = uigetfile('*.csv');
     output = readtable(file);
     x = output.Payload;
@@ -15,7 +17,7 @@ else
     zI = output.Income;
     zT = output.TimeSavings;
     zC = output.CropLoss;
-    zB = output.BoatJobLoss;
+    zB = output.BoatTripLoss;
     zF = output.ForestLoss;
     
     payloadrange = [min(output.Payload),max(output.Payload)];
@@ -67,7 +69,7 @@ for i = 1:length(fleet)
 end
 hold off
 figure(2)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZC(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
