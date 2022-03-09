@@ -64,6 +64,9 @@ class AirshipImpactMetrics:
         ValueProduceSoldBeforeAirship = 0.0
         ValueProduceSoldWithAirship = 0.0
         ValueProduceSoldWithBoat = 0.0
+        totalProduceSoldByAirship = 0.0
+        totalProduceSoldByBoat = 0.0
+        totalProduceSoldByCity = 0.0
         boatCostToSell = 0.0
         boatCostToSellNoAirship = 0.0
         self.produceSoldByAllBoats = 0.0
@@ -71,13 +74,16 @@ class AirshipImpactMetrics:
             producedByCity = np.sum(self.Fruit.DailyCityFruitProduction_TonsPerDay[i])
             lossedByCity = np.sum(self.Cities[i].AvailableGoods)
             produceSoldByAirship = producedByCity - lossedByCity
+            totalProduceSoldByAirship += produceSoldByAirship
             produceSoldByBoat = np.sum(self.Cities[i].AvailableGoods) - np.sum(self.Boats[i].FruitLossAfterBoat)
+            totalProduceSoldByBoat += produceSoldByBoat
             self.produceSoldByAllBoats += produceSoldByBoat
             ValueProduceSoldWithAirship += produceSoldByAirship * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
             ValueProduceSoldWithBoat += produceSoldByBoat * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
             boatCostToSell += np.sum(self.Boats[i].DailyBoatCostToSell)
             boatCostToSellNoAirship += self.Boats[i].BoatCostToSellNoAirship
             ValueProduceSoldBeforeAirship += self.Fruit.CitySoldFraction[i] * producedByCity * self.Fruit.AverageFruitValueCity_RealsPerTon[i]
+            totalProduceSoldByCity += self.Fruit.CitySoldFraction[i] * producedByCity
         AirshipCostToSell = 0.0
         for airship in self.Airships:
             AirshipCostToSell += airship.CostToOperate
@@ -88,10 +94,17 @@ class AirshipImpactMetrics:
        
         incomeBefore = ValueProduceSoldBeforeAirship - CosttoSellCropWithoutAirship
         incomeAfter = ValueProduceSoldWithAirshipAndBoat - CosttoSellCropWithAirship
-        self.AirshipRevenue = ValueProduceSoldWithAirship
+
         self.I_Income = incomeAfter - incomeBefore # Brazilian Reals
-        if airship.Payload > 15:
-            stophere = 1
+
+        self.AirshipRevenue = ValueProduceSoldWithAirship
+        self.AirshipOperationalCostPerTon = AirshipCostToSell / totalProduceSoldByAirship
+        if np.isclose(totalProduceSoldByBoat,0.0) or totalProduceSoldByBoat < 0.0:
+            self.BoatCostPerTonWithAirship = 0.0
+        else:
+            self.BoatCostPerTonWithAirship = boatCostToSell / totalProduceSoldByBoat
+        self.BoatCostPerTonNoAirship = boatCostToSellNoAirship / totalProduceSoldByCity
+
 
     # Displaced boat people
     def impact_boat_job_loss(self):

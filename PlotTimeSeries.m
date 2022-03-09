@@ -2,44 +2,56 @@ file = uigetfile('*.csv');
 output = readtable(file);
 file2 = uigetfile('*.csv');
 output2 = readtable(file2);
-
+%%
 airship10 = find(output.Airship == 0);
 airship11 = find(output.Airship == 1);
-SimulationTime_1 = output.SimulationTime(airship10);
-SimulationTime_2 = output.SimulationTime(airship11);
+SimulationTime1 = output.SimulationTime(airship10);
+SimulationTime2 = output.SimulationTime(airship11);
 airship20 = find(output2.Airship == 0);
 airship21 = find(output2.Airship == 1);
-SimulationTime_3 = output2.SimulationTime(airship20);
-SimulationTime_4 = output2.SimulationTime(airship21);
+SimulationTime3 = output2.SimulationTime(airship20);
+SimulationTime4 = output2.SimulationTime(airship21);
 
-PayloadLevel_1 = output.PayloadLevel(airship10);
-PayloadLevel_2 = output.PayloadLevel(airship11);
-PayloadLevel_3 = output2.PayloadLevel(airship20);
-PayloadLevel_4 = output2.PayloadLevel(airship21);
-Activity_1 = output.Activity(airship10);
-Activity_2 = output.Activity(airship11);
-Activity_3 = output2.Activity(airship20);
-Activity_4 = output2.Activity(airship21);
+PayloadLevel1 = output.PayloadLevel(airship10);
+PayloadLevel2 = output.PayloadLevel(airship11);
+PayloadLevel3 = output2.PayloadLevel(airship20);
+PayloadLevel4 = output2.PayloadLevel(airship21);
+Activity1 = output.Activity(airship10);
+Activity2 = output.Activity(airship11);
+Activity3 = output2.Activity(airship20);
+Activity4 = output2.Activity(airship21);
 
-figure(3)
-plot(SimulationTime_1,PayloadLevel_1, 'r','LineWidth',5)
+figure(1)
+plot(SimulationTime1,PayloadLevel1, 'r','LineWidth',5)
 hold on
-plot(SimulationTime_2,PayloadLevel_2, 'g','LineWidth',4)
-plot(SimulationTime_3,PayloadLevel_3, 'b','LineWidth',3)
-plot(SimulationTime_4,PayloadLevel_4, 'k','LineWidth',2)
+plot(SimulationTime2,PayloadLevel2, 'g','LineWidth',4)
+plot(SimulationTime3,PayloadLevel3, 'Color', [0.6350 0.0780 0.1840],'LineWidth',3)
+plot(SimulationTime4,PayloadLevel4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
 legend('27-0','27-1','26-0','26-1')
 hold off
+% xlim([2335,2345])
 
-
-
-figure(4)
-plot(SimulationTime_1,Activity_1, 'r','LineWidth',5)
+figure(2)
+plot(SimulationTime1,Activity1, 'r','LineWidth',5)
 hold on
-plot(SimulationTime_2,Activity_2, 'g','LineWidth',4)
-plot(SimulationTime_3,Activity_3, 'b','LineWidth',3)
-plot(SimulationTime_4,Activity_4, 'k','LineWidth',2)
+plot(SimulationTime2,Activity2, 'g','LineWidth',4)
+plot(SimulationTime3,Activity3, 'Color', [0.6350 0.0780 0.1840],'LineWidth',3)
+plot(SimulationTime4,Activity4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
 legend('27-0','27-1','26-0','26-1')
+% xlim([2335,2345])
 hold off
 %%
-max(PayloadLevel_1 - PayloadLevel_3)
-max(PayloadLevel_2 - PayloadLevel_4)
+max(PayloadLevel1(1:length(PayloadLevel3)) - PayloadLevel3)
+max(PayloadLevel2(1:length(PayloadLevel4)) - PayloadLevel4)
+figure(4)
+plot(1:length(Activity4),Activity1(1:length(Activity4))-Activity4)
+%%
+listActivities1 = Activity1(find(SimulationTime1 == 2335):find(SimulationTime1 == 2359));
+listActivities2 = Activity2(find(SimulationTime2 == 2335):find(SimulationTime2 == 2359));
+listActivities3 = Activity3(find(SimulationTime3 == 2335):find(SimulationTime3 == 2359));
+listActivities4 = Activity4(find(SimulationTime4 == 2335):find(SimulationTime4 == 2359));
+listActivities1(find(listActivities1==-2)) = [];
+listActivities2(find(listActivities2==-2)) = [];
+listActivities3(find(listActivities3==-2)) = [];
+listActivities4(find(listActivities4==-2)) = [];
+

@@ -55,25 +55,25 @@ else
 end
 
 % individual
-figure(1)
-for i = 1:length(fleet)
+figure(111)
+for i = 1:1%length(fleet)
     zScaled = -100*ZB(:,:,i)/min(ZB(:,:,i),[],'all');
     surf(X(:,:,i),Y(:,:,i),zScaled)
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
-    zlabel('Boat Job Loss (percent decrease))')
+    zlabel('Impact to Boat Jobs (percent decrease))')
     colormap parula
     colorbar
     view(115,22)
     hold on
 end
 hold off
-figure(2)
-for i = 1:length(fleet)
+figure(222)
+for i = 1:1%length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZC(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
-    zlabel('Crop Loss (tons crops saved)')
+    zlabel('Impact to Crops (tons crops saved)')
     colormap parula
     colorbar
     view(115,22)
@@ -81,12 +81,12 @@ for i = 1:length(fleet)
 end
 % zlim([0,max(ZC(:,:,:),[],'all')])
 hold off
-figure(3)
-for i = 1:length(fleet)
+figure(333)
+for i = 1:1%length(fleet)
     surf(X(:,:,i),Y(:,:,i),-2.29568e-5*ZF(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
-    zlabel('Forest Loss (acres lost)')
+    zlabel('Impact to Forest (acres lost)')
     oldcolors = colormap;
     colormap(flipud(oldcolors))
     colorbar
@@ -94,8 +94,8 @@ for i = 1:length(fleet)
     hold on
 end
 hold off
-figure(4)
-for i = 1:length(fleet)
+figure(444)
+for i = 1:1%length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZI(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
@@ -108,8 +108,8 @@ end
 % zlim([0,max(ZI(:,:,:),[],'all')])
 % set(gca,'ColorScale','linear','CLim',[-6*10^5, max(ZI(:,:,i),[],'all')])
 hold off
-figure(5)
-for i = 1:length(fleet)
+figure(555)
+for i = 1:1%length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZT(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')

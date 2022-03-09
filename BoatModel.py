@@ -12,7 +12,7 @@ class Boats:
         self.Capacity = 1.0 #tons
         self.LoadTime = 0.125 #hours
         self.TripDistance = 2.0 * city.CityToHubBoatDistance #nautical miles
-        self.FruitLoss = city.AvailableGoods.copy()
+        self.FruitLoss = np.round(city.AvailableGoods.copy(),decimals=3)
         self.FruitLossAfterBoat = 0.0
         self.BoatSurplus = 0.0
         self.UpdatedNumberOfBoats = 0.0

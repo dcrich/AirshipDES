@@ -28,11 +28,12 @@ from generatorDOE import generate_designs
 # DOE_filename = "AirshipDesigns750fleet.txt" 
 # DOE = pd.read_csv(DOE_filename) #load DOE data
 # AirshipDesigns = DOE.values
-AirshipDesigns, payloadG, speedG, fleetG, payloadfraction, fueltankfraction, finenessratio = generate_designs(payloadrange=[1,16], speedrange=[20,101], fleetrange=[1,3], setsize = 100)
+AirshipDesigns, p,s,f,pf,ff,fr = generate_designs()
+    # payloadrange=[1,21], speedrange=[20,81], fleetrange=[1,4], setsize = [2,2,1])
 
 AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),15),dtype=float)
 ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
-OtherOuputs = np.zeros((np.size(AirshipDesigns,0),11),dtype=float)
+OtherOuputs = np.zeros((np.size(AirshipDesigns,0),20),dtype=float)
 counter = 0 
 tic = time.perf_counter()
 for dataDOE in AirshipDesigns:
@@ -54,16 +55,17 @@ for dataDOE in AirshipDesigns:
     RepairResource = 1
     AvgRefuelTime = 0.5
     RefuelResource = 1
-    hub = hubClass.Hub(env, hubCoordinates, AvgUnloadingRate, UnloadingResource, AvgRepairTime, RepairResource, AvgRefuelTime, RefuelResource)
+    hub = hubClass.Hub(env, hubCoordinates, AvgUnloadingRate, UnloadingResource, 
+                       AvgRepairTime, RepairResource, AvgRefuelTime, RefuelResource)
 
     # create cities
     # City Attributes #
     cityCoordinates = [ [-3.196, -59.826],  # Careiro
-                        [-3.276, -60.190]]#,  # Iranduba
-                        # [-3.387, -60.344],  # Jutai
-                        # [-3.441, -60.462]]  # Manaquiri
-    # cityCoordinates = [ [-2.9, -59.9],  
-    #                     [-2.9, -60.1],  
+                        [-3.276, -60.190],  # Iranduba
+                        [-3.387, -60.344],  # Jutai
+                        [-3.441, -60.462]]  # Manaquiri
+    # cityCoordinates = [ [-3., -59.9],  
+    #                     [-3., -60.1],  
     #                     [-3.1, -59.9],  
     #                     [-3.1, -60.1]]  
     AvgLoadingRate = 0.1 # hours/ton
@@ -71,8 +73,9 @@ for dataDOE in AirshipDesigns:
     FarmerCount = [77., 166., 47., 97.]
     boatCount = [5., 7., 7., 12.] # [5.+5., 7.+28., 7.+4., 12.+7.] # with manaus boats divided between
     CityToHubBoatDistance =  [8.8, 19.3, 39.1, 48.6] #nautical miles
-    cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], boatCount[c], CityToHubBoatDistance[c], AvgLoadingRate, LoadingResources)
-                    for c in range(len(cityCoordinates))]
+    cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], boatCount[c], 
+                             CityToHubBoatDistance[c], AvgLoadingRate, LoadingResources)
+              for c in range(len(cityCoordinates))]
 
     # create airships 
     # Airship Attributes #
@@ -95,10 +98,12 @@ for dataDOE in AirshipDesigns:
     fuelUsed = 0.0
     totalTrips = 0
     emptyTrips = 0
+    loadWaitTime = 0.0
     for airship in airshipFleet:
         fuelUsed += np.sum(airship.DailyFuelConsumption)
         totalTrips += airship.citiesVisitedInTotal
         emptyTrips += airship.EmptyTrips
+        loadWaitTime += airship.loadWaitTime
     AirshipDesignParameterTracker[counter,:] = airshipFleet[0].return_airship_parameters()
     ImpactTracker[counter,:] = impactMetrics.return_impact_array()
     OtherOuputs[counter,0] = impactMetrics.AirshipRevenue
@@ -108,10 +113,14 @@ for dataDOE in AirshipDesigns:
     OtherOuputs[counter,4] = fuelUsed
     OtherOuputs[counter,5] = totalTrips
     OtherOuputs[counter,6] = emptyTrips
-    OtherOuputs[counter,7] = np.sum(cities[0].AvailableGoods) #Careiro
-    OtherOuputs[counter,8] = np.sum(cities[1].AvailableGoods) #Iranduba
-    # OtherOuputs[counter,9] = np.sum(cities[2].AvailableGoods) #Jutai
-    # OtherOuputs[counter,10] = np.sum(cities[3].AvailableGoods) #Manaquiri
+    OtherOuputs[counter,7] = loadWaitTime
+    OtherOuputs[counter,8] = np.sum(cities[0].AvailableGoods) #Careiro
+    OtherOuputs[counter,9] = np.sum(cities[1].AvailableGoods) #Iranduba
+    OtherOuputs[counter,10] = np.sum(cities[2].AvailableGoods) #Jutai
+    OtherOuputs[counter,11] = np.sum(cities[3].AvailableGoods) #Manaquiri
+    OtherOuputs[counter,12] = impactMetrics.AirshipOperationalCostPerTon
+    OtherOuputs[counter,13] = impactMetrics.BoatCostPerTonWithAirship
+    OtherOuputs[counter,14] = impactMetrics.BoatCostPerTonNoAirship
 
     counter += 1
 
@@ -146,10 +155,15 @@ outputImpacts = pd.DataFrame(
         "Boat Trip Loss": OtherOuputs[:,3],
         "Fuel Used": OtherOuputs[:,4],
         "Total Trips": OtherOuputs[:,5],
-        "Lost Careio": OtherOuputs[:,6],
-        "Lost Iranduba": OtherOuputs[:,7],
-        "Lost Jutai": OtherOuputs[:,8],
-        "Lost Manaquiri": OtherOuputs[:,9]
+        "Empty Trips": OtherOuputs[:,6],
+        "Load Wait Time": OtherOuputs[:,7],
+        "Lost Careio": OtherOuputs[:,8],
+        "Lost Iranduba": OtherOuputs[:,9],
+        "Lost Jutai": OtherOuputs[:,10],
+        "Lost Manaquiri": OtherOuputs[:,11],
+        "AirshipCostPerTon":OtherOuputs[:,12],
+        "Boat Cost Per Ton Airship":OtherOuputs[:,13],
+        "Boat Cost Per Ton Only":OtherOuputs[:,14]
     }
 )
 

@@ -32,21 +32,21 @@ env = simpy.Environment()
 
 # create hub
 # Hub Attributes #
-hubCoordinates = [-3.039, -60.048]      # Manaus, BZ
+hubCoordinates = [-3.117, -60.025]     # Manaus, BZ
 AvgUnloadingRate = 0.05 # hours/ton
 UnloadingResource = 1
 AvgRepairTime = 0.0
 RepairResource = 1
-AvgRefuelTime = 1.0
+AvgRefuelTime = 0.5
 RefuelResource = 1
 hub = hubClass.Hub(env, hubCoordinates, AvgUnloadingRate, UnloadingResource, AvgRepairTime, RepairResource, AvgRefuelTime, RefuelResource)
 
 # create cities
 # City Attributes #
-cityCoordinates = [ [-3.139, -60.248],  # Careiro
-                    [-3.441, -60.462]]#,  # Iranduba
-                    # [-3.387, -60.344],  # Jutai
-                    # [-3.276, -60.190] ] # Manaquiri
+cityCoordinates = [ [-3.196, -59.826],  # Careiro
+                    [-3.276, -60.190],  # Iranduba
+                    [-3.387, -60.344],  # Jutai
+                    [-3.441, -60.462]]  # Manaquiri
 AvgLoadingRate = 0.1 # hours/ton
 LoadingResources = 1
 FarmerCount = [77., 166., 47., 97.]
@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
-dataDOE = np.array([5.,50.,2.0,0.3,0.05,3])
+dataDOE = np.array([3.,34.,1.0,0.3,0.05,3])
 FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)
@@ -88,28 +88,55 @@ outputTimeSeries = pd.DataFrame(
 )
 
 # Data by day, ?by experiment?
+outputByDay = pd.DataFrame(
+    {
+        "Simulation Day": np.arange(0,365,1),
+        "Production": FruitData.DailyFruitProduction,
+        "Careiro Fruit Loss": cities[0].AvailableGoods,
+        "Iranduba Fruit Loss": cities[1].AvailableGoods,
+        "Jutai Fruit Loss": cities[2].AvailableGoods,
+        "Manaquiri Fruit Loss": cities[3].AvailableGoods,
+        "Careiro Visits": cities[0].NumberOfVisits,
+        "Iranduba Visits": cities[1].NumberOfVisits,
+        "Jutai Visits": cities[2].NumberOfVisits,
+        "Manaquiri Visits": cities[3].NumberOfVisits,
+        "Careiro Load Time": cities[0].LoadingTime,
+        "Iranduba Load Time": cities[1].LoadingTime,
+        "Jutai Load Time": cities[2].LoadingTime,
+        "Manaquiri Load Time": cities[3].LoadingTime,
+        "Careiro Loaded Goods": cities[0].LoadedGoods,
+        "Iranduba Loaded Goods": cities[1].LoadedGoods,
+        "Jutai Loaded Goods": cities[2].LoadedGoods,
+        "Manaquiri Loaded Goods": cities[3].LoadedGoods,
+        "Airship 0 End Workday": airshipFleet[0].TimeEndedWorkday,
+        # "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday,
+        "Time Savings": impactMetrics.I_TimeSavings,
+        "Crop Loss": impactMetrics.I_CropLoss*np.ones(365),
+        "Income": impactMetrics.I_Income*np.ones(365),
+        "Boat Job Loss": impactMetrics.I_BoatJobLoss*np.ones(365),
+        "Forest Loss": impactMetrics.I_ForestLoss*np.ones(365)
+    }
+)
+
 # outputByDay = pd.DataFrame(
 #     {
 #         "Simulation Day": np.arange(0,365,1),
 #         "Production": FruitData.DailyFruitProduction,
 #         "Careiro Fruit Loss": cities[0].AvailableGoods,
 #         "Iranduba Fruit Loss": cities[1].AvailableGoods,
-#         "Jutai Fruit Loss": cities[2].AvailableGoods,
-#         "Manaquiri Fruit Loss": cities[3].AvailableGoods,
 #         "Careiro Visits": cities[0].NumberOfVisits,
 #         "Iranduba Visits": cities[1].NumberOfVisits,
-#         "Jutai Visits": cities[2].NumberOfVisits,
-#         "Manaquiri Visits": cities[3].NumberOfVisits,
 #         "Careiro Load Time": cities[0].LoadingTime,
 #         "Iranduba Load Time": cities[1].LoadingTime,
-#         "Jutai Load Time": cities[2].LoadingTime,
-#         "Manaquiri Load Time": cities[3].LoadingTime,
 #         "Careiro Loaded Goods": cities[0].LoadedGoods,
 #         "Iranduba Loaded Goods": cities[1].LoadedGoods,
-#         "Jutai Loaded Goods": cities[2].LoadedGoods,
-#         "Manaquiri Loaded Goods": cities[3].LoadedGoods,
 #         "Airship 0 End Workday": airshipFleet[0].TimeEndedWorkday,
-#         "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday
+#         "Airship 1 End Workday": airshipFleet[1].TimeEndedWorkday,
+#         "Time Savings": impactMetrics.I_TimeSavings,
+#         "Crop Loss": impactMetrics.I_CropLoss*np.ones(365),
+#         "Income": impactMetrics.I_Income*np.ones(365),
+#         "Boat Job Loss": impactMetrics.I_BoatJobLoss*np.ones(365),
+#         "Forest Loss": impactMetrics.I_ForestLoss*np.ones(365)
 #     }
 # )
 
@@ -127,7 +154,10 @@ outputTimeSeries = pd.DataFrame(
 
 
 dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
-outputTimeSeries.to_csv('outputTimeSeries'+dtstr+'.csv')
+outputByDay.to_csv(str(dataDOE[0]) + '-'+ str(dataDOE[1]) + '-'+str(dataDOE[2]) + '_outputByDay'+dtstr+'.csv')
+outputTimeSeries.to_csv(str(dataDOE[0]) + '-'+ str(dataDOE[1]) + '-'+str(dataDOE[2]) + '_outputTimeSeries'+dtstr+'.csv')
+
+
 # outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
 # outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
 
