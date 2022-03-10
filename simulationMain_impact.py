@@ -28,8 +28,8 @@ from generatorDOE import generate_designs
 # DOE_filename = "AirshipDesigns750fleet.txt" 
 # DOE = pd.read_csv(DOE_filename) #load DOE data
 # AirshipDesigns = DOE.values
-AirshipDesigns, p,s,f,pf,ff,fr = generate_designs()
-    # payloadrange=[1,21], speedrange=[20,81], fleetrange=[1,4], setsize = [2,2,1])
+AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+    payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,4], setsize = [2,2,1])
 
 AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),15),dtype=float)
 ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
@@ -121,6 +121,7 @@ for dataDOE in AirshipDesigns:
     OtherOuputs[counter,12] = impactMetrics.AirshipOperationalCostPerTon
     OtherOuputs[counter,13] = impactMetrics.BoatCostPerTonWithAirship
     OtherOuputs[counter,14] = impactMetrics.BoatCostPerTonNoAirship
+    OtherOuputs[counter,15] = impactMetrics.I_CropLoss_IncludingBoat
 
     counter += 1
 
@@ -163,7 +164,8 @@ outputImpacts = pd.DataFrame(
         "Lost Manaquiri": OtherOuputs[:,11],
         "AirshipCostPerTon":OtherOuputs[:,12],
         "Boat Cost Per Ton Airship":OtherOuputs[:,13],
-        "Boat Cost Per Ton Only":OtherOuputs[:,14]
+        "Boat Cost Per Ton Only":OtherOuputs[:,14],
+        "Crop Loss Including Boat": OtherOuputs[:,15]
     }
 )
 

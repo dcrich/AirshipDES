@@ -58,7 +58,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
-dataDOE = np.array([3.,34.,1.0,0.3,0.05,3])
+dataDOE = np.array([3.,32.,1.0,0.3,0.05,3])
 FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)

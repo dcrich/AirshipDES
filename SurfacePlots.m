@@ -4,8 +4,8 @@ warning off
 if false %exist('uniform12149.mat','file')
     load uniform12149.mat
 else
-%     steps = [1,1,1];
-    steps = [2,2,1];
+    steps = [1,1,1];
+%     steps = [2,2,1];
 %     steps = [3,5,1];
 %     steps = [5,10,1];
     file = uigetfile('*.csv');
@@ -56,7 +56,7 @@ end
 
 % individual
 figure(111)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     zScaled = -100*ZB(:,:,i)/min(ZB(:,:,i),[],'all');
     surf(X(:,:,i),Y(:,:,i),zScaled)
     xlabel('Payload (tons)')
@@ -69,7 +69,7 @@ for i = 1:1%length(fleet)
 end
 hold off
 figure(222)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZC(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
@@ -82,7 +82,7 @@ end
 % zlim([0,max(ZC(:,:,:),[],'all')])
 hold off
 figure(333)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     surf(X(:,:,i),Y(:,:,i),-2.29568e-5*ZF(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
@@ -95,7 +95,7 @@ for i = 1:1%length(fleet)
 end
 hold off
 figure(444)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZI(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
@@ -109,7 +109,7 @@ end
 % set(gca,'ColorScale','linear','CLim',[-6*10^5, max(ZI(:,:,i),[],'all')])
 hold off
 figure(555)
-for i = 1:1%length(fleet)
+for i = 1:length(fleet)
     surf(X(:,:,i),Y(:,:,i),ZT(:,:,i))
     xlabel('Payload (tons)')
     ylabel('Cruise Speed (knots)')
