@@ -8,7 +8,6 @@ Simulation
 import os
 import time
 import simpy
-import random
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -22,6 +21,7 @@ import AirshipCostModel as ACM
 import fruit as fp
 import BoatModel as BM
 from generatorDOE import generate_designs
+from cityDistributionGenerator import generate_new_cities
 
 
 # DOE_filename = "AirshipDesignsTest.txt"
@@ -29,6 +29,7 @@ from generatorDOE import generate_designs
 # DOE = pd.read_csv(DOE_filename) #load DOE data
 # AirshipDesigns = DOE.values
 def run_simulation(AirshipDesigns):
+    numberOfNewCities = 0
     print(datetime.now())
     AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),17),dtype=float)
     ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
@@ -37,10 +38,10 @@ def run_simulation(AirshipDesigns):
     tic = time.perf_counter()
     for dataDOE in AirshipDesigns:
         # define environment
-        random.seed(96)
+        np.random.seed(96)
         SimTime = 365.0 * 24.0 # hours
         Workday = [8.0,17.0] # start hour, end hour
-        FruitData = fp.fruit()
+        FruitData = fp.fruit(0)
 
         env = simpy.Environment()
 
@@ -63,6 +64,8 @@ def run_simulation(AirshipDesigns):
                             [-3.276, -60.190],  # Iranduba
                             [-3.387, -60.344],  # Jutai
                             [-3.441, -60.462]]  # Manaquiri
+        if numberOfNewCities > 0:
+            cityCoordinates = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
         # cityCoordinates = [ [-3.293, -60.196],  
         #                     [-3.293, -59.854], 
         #                     [-3.010, -60.025]]
@@ -186,16 +189,17 @@ def run_simulation(AirshipDesigns):
 
 
 #SIMULATIONS
-# # Original
+#Threshold cutoff is between 0.057 and 0.07 for profitability, any other changes may just be affecting the schedule
+# # Main
 # AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
 #     payloadrange=[1,31], speedrange=[20,101], fleetrange=[1,6], 
-#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [1,1,1], setlength=[1,1])
+#     threshrange=[0.5,1], loadraterange=[0.2,0.5], setsize = [1,1,1], setlength=[1,1])
 # run_simulation(AirshipDesigns)
 
 # # Threshold Sensitivity - sparse
 # AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
-#     payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,6], 
-#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [2,2,1], setlength=[5,1])
+#     payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,5], 
+#     threshrange=[0.0,1], loadraterange=[0.2,0.5], setsize = [2,5,1], setlength=[10,1])
 # run_simulation(AirshipDesigns)
 
 # # Threshold Sensitivity Test - Very sparse
@@ -204,17 +208,17 @@ def run_simulation(AirshipDesigns):
 #     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[4,1])
 # run_simulation(AirshipDesigns)
 
-# # Load Rate Sensitivity - sparse
-# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
-#     payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,6], 
-#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [2,2,1], setlength=[1,5])
-# run_simulation(AirshipDesigns)
-
-# Load Rate Sensitivity Test - Very sparse
+# Load Rate Sensitivity - sparse
 AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
-    payloadrange=[1,31], speedrange=[20,81], fleetrange=[1,5], 
-    threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[1,4])
+    payloadrange=[1,31], speedrange=[20,81], fleetrange=[1,6], 
+    threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [2,2,1], setlength=[1,5])
 run_simulation(AirshipDesigns)
+
+# # Load Rate Sensitivity Test - Very sparse
+# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+#     payloadrange=[1,31], speedrange=[20,81], fleetrange=[1,5], 
+#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[1,4])
+# run_simulation(AirshipDesigns)
 
 
 
