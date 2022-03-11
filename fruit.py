@@ -42,19 +42,19 @@ class fruit:
 #         # self.TotalProductionValue = 4205000.0 # in brazilian reals
 
 #         # fraction of daily production from each city, fractions from FarmerDataAdjusted.xls, fraction = fraction of production from that city
-#         CareiroProduction = 0.25* self.DailyFruitProduction
-#         IrandubaProduction = 0.25 * self.DailyFruitProduction
-#         JutaiProduction = 0.25 * self.DailyFruitProduction
+#         CareiroProduction = 0.33333333* self.DailyFruitProduction
+#         IrandubaProduction = 0.33333333 * self.DailyFruitProduction
+#         JutaiProduction = 0.33333333 * self.DailyFruitProduction
 #         ManaquiriProduction = 0.25 * self.DailyFruitProduction
 #         # fruit available at each city each day
 #         self.DailyCityFruitProduction_TonsPerDay = np.round(np.array([CareiroProduction, IrandubaProduction, JutaiProduction, ManaquiriProduction]),decimals=3)
 #         self.DailyCityFruitProduction_TonsPerDay[self.DailyCityFruitProduction_TonsPerDay < 0.0] = 0.0
 #         # daily value of fruit produced in each city, fractions from FarmerDataAdjusted.xls, fraction = fraction of value from that city * value of all goods / all goods
 #         # in brazilian reals
-#         CareiroValue = 1000 * 0.25 #* self.DailyFruitProduction 
-#         IrandubaValue = 1000 * 1.25 #* self.DailyFruitProduction
-#         JutaiValue = 1000 * 0.25 #* self.DailyFruitProduction
-#         ManaquiriValue = 1000 * 0.25 #* self.DailyFruitProduction
+#         CareiroValue = 1000 * 1.873830294 #* self.DailyFruitProduction 
+#         IrandubaValue = 1000 * 2.099050572 #* self.DailyFruitProduction
+#         JutaiValue = 1000 * 2.034181964 #* self.DailyFruitProduction
+#         ManaquiriValue = 1000 * 2.474721974 #* self.DailyFruitProduction
 #         # average fruit value per ton for each city
 #         self.AverageFruitValueCity_RealsPerTon = np.array([CareiroValue, IrandubaValue, JutaiValue, ManaquiriValue])
 

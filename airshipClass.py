@@ -3,7 +3,6 @@ Airship Class
 - make inrange calculation use TripPayloadThreshold in load time estimate
 """
 import numpy as np
-import random
 
 class Airship:
     """"""
@@ -16,8 +15,7 @@ class Airship:
         self.Hub = hub
         self.Cities = cities
         self.maxfruit = np.zeros(4)
-        self.TripPayloadThreshold = 0.0
-        self.TripCityGoodsThreshold = 0.0
+        
 
         # airship design parameters
         self.UsefulPayload = airshipAttributes[0]
@@ -34,7 +32,11 @@ class Airship:
         self.FuelTankFraction = airshipAttributes[9]
         self.FinenessRatio = airshipAttributes[10]
         self.FleetSize = airshipAttributes[11]
+        self.TripPayloadThreshold = airshipAttributes[12]
+        self.TripCityGoodsThreshold = airshipAttributes[12]
+        self.AvgLoadRate = airshipAttributes[13]
         
+
         # tracking variables
         self.PayloadRemaining = airshipAttributes[0]
         # self.GoodsTransported = np.zeros(365, dtype=float)
@@ -120,7 +122,7 @@ class Airship:
         yield self.env.timeout(timeUntilNextWorkday) # do nothing working until next day 
         self.set_city_priority()
         self.NextCityIndex = self.NumberOfCities # start each day trying to go to city 1
-        if self.CurrentDay == 79:
+        if self.CurrentDay == 3:
             stophere = 1
         
     def to_city(self):
@@ -181,11 +183,13 @@ class Airship:
                     goodsLoaded = self.PayloadRemaining  #* random.random()
                 else:
                     goodsLoaded = goodsToLoad  #* random.random()
-                timeToLoad = goodsLoaded * self.Cities[self.CurrentCity].LoadingRate
+                
+                loadRate = np.abs(np.random.default_rng().normal(self.AvgLoadRate,0.01))
+                timeToLoad = goodsLoaded * loadRate
                 
                 if self.env.now + timeToLoad + self.timeToHubFromNextCity > self.EndHourWorkday: # if it will take to long to load, then load what it can
                     timeToLoad = self.EndHourWorkday - self.env.now - self.timeToHubFromNextCity
-                    goodsLoaded = timeToLoad /  self.Cities[self.CurrentCity].LoadingRate
+                    goodsLoaded = timeToLoad / loadRate
                     if goodsLoaded > self.PayloadRemaining:
                         goodsLoaded = self.PayloadRemaining
                 if np.isclose(timeToLoad,0.0) or timeToLoad < 0.0:
@@ -236,7 +240,8 @@ class Airship:
             if unloadWaitTime > 0.0:
                 self.wait(unloadWaitTime)
             goodsUnloaded = self.UsefulPayload - self.PayloadRemaining
-            timeToUnload = goodsUnloaded * self.Hub.UnloadingRate
+            unloadingRate = np.abs(np.random.default_rng().normal(self.Hub.UnloadingRate,0.01))
+            timeToUnload = goodsUnloaded * unloadingRate
             yield self.env.timeout(timeToUnload)
 
             #print(self.ID + ' done unloading at %.2f'%self.env.now)
@@ -251,7 +256,8 @@ class Airship:
         """
         with self.Hub.RefuelResource.request() as refuelReq:
             yield refuelReq
-            yield self.env.timeout(self.Hub.AvgRefuelTime)
+            refuelTime = np.abs(np.random.default_rng().normal(self.Hub.AvgRefuelTime,0.01))
+            yield self.env.timeout(refuelTime)
             #print(self.ID + ' done refueling at %.2f'%self.env.now)
             fuelUsed = self.FuelCapacity - self.FuelRemaining
             self.DailyFuelConsumption[self.CurrentDay] += fuelUsed
@@ -266,7 +272,8 @@ class Airship:
         """
         with self.Hub.RepairResource.request() as repairReq:
             yield repairReq
-            yield self.env.timeout(self.Hub.AvgRepairTime)
+            repairTime = np.abs(np.random.default_rng().normal(self.Hub.AvgRepairTime,0.75))
+            yield self.env.timeout(repairTime)
             #print(self.ID + ' done maintenance at %.2f'%self.env.now)
             
         
@@ -347,7 +354,7 @@ class Airship:
         self.timeToHubFromNextCity = distanceToHubFromNextCity / self.CruiseSpeed
         self.FuelToNextCity = self.calculate_fuel_used(self.TimeToNextCity, self.CruiseSpeed)
         fuelToHubFromNextCity = self.calculate_fuel_used(self.timeToHubFromNextCity, self.CruiseSpeed)
-        timeToLoad = self.TripPayloadThreshold * self.Cities[self.NextCity].LoadingRate #should be able to load the threshold amount
+        timeToLoad = self.TripPayloadThreshold * self.AvgLoadRate #should be able to load the threshold amount
 
         InRangeFuel = (self.FuelToNextCity + fuelToHubFromNextCity) < self.FuelRemaining
         InRangeTime = (self.TimeToNextCity + self.timeToHubFromNextCity + timeToLoad) < (self.EndHourWorkday - self.env.now)
@@ -455,7 +462,9 @@ class Airship:
                          self.Length,
                          self.Footprint,
                          self.RequiredHorsepower,
-                         self.Range
+                         self.Range,
+                         self.TripPayloadThreshold,
+                         self.AvgLoadRate
                          ])
 
 

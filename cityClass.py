@@ -6,7 +6,7 @@ import simpy
 
 class City:
     """"""
-    def __init__(self, env, id, LatLon, fruit, FarmerCount, boatCount, CityToHubBoatDistance, AvgLoadingRate, LoadingResources):
+    def __init__(self, env, id, LatLon, fruit, FarmerCount, boatCount, CityToHubBoatDistance, LoadingResources):
         self.env = env
         self.LatLon = LatLon
         self.ID = id
@@ -20,7 +20,7 @@ class City:
         self.MongerDailySalary = 50
 
         # city capabilities/capacities
-        self.LoadingRate = AvgLoadingRate # hours/ton
+        # self.LoadingRate = AvgLoadingRate # hours/ton
         self.LoadingResource = simpy.Resource(env,capacity=LoadingResources)
         self.NumberOfBoats = boatCount
 

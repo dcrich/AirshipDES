@@ -100,9 +100,12 @@ class AirshipImpactMetrics:
         self.I_Income = incomeAfter - incomeBefore # Brazilian Reals
 
         self.AirshipRevenue = ValueProduceSoldWithAirship
-        self.AirshipOperationalCostPerTon = AirshipCostToSell / totalProduceSoldByAirship
+        if np.isclose(totalProduceSoldByAirship,0.0) or totalProduceSoldByAirship < 0:
+            self.AirshipOperationalCostPerTon = 999999
+        else:
+            self.AirshipOperationalCostPerTon = AirshipCostToSell / totalProduceSoldByAirship
         if np.isclose(totalProduceSoldByBoat,0.0) or totalProduceSoldByBoat < 0.0:
-            self.BoatCostPerTonWithAirship = 0.0
+            self.BoatCostPerTonWithAirship = 999999
         else:
             self.BoatCostPerTonWithAirship = boatCostToSell / totalProduceSoldByBoat
         self.BoatCostPerTonNoAirship = boatCostToSellNoAirship / totalProduceSoldByCity

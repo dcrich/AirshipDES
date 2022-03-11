@@ -32,7 +32,8 @@ env = simpy.Environment()
 
 # create hub
 # Hub Attributes #
-hubCoordinates = [-3.117, -60.025]     # Manaus, BZ
+# hubCoordinates = [-3.117, -60.025]     # Manaus, BZ
+hubCoordinates = [-3.205, -60.025] 
 AvgUnloadingRate = 0.05 # hours/ton
 UnloadingResource = 1
 AvgRepairTime = 0.0
@@ -47,6 +48,9 @@ cityCoordinates = [ [-3.196, -59.826],  # Careiro
                     [-3.276, -60.190],  # Iranduba
                     [-3.387, -60.344],  # Jutai
                     [-3.441, -60.462]]  # Manaquiri
+cityCoordinates = [ [-3.293, -60.196],  # Careiro
+                    [-3.293, -59.854],  # Iranduba
+                    [-3.010, -60.025]]
 AvgLoadingRate = 0.1 # hours/ton
 LoadingResources = 1
 FarmerCount = [77., 166., 47., 97.]
@@ -58,7 +62,7 @@ cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], 
 # create airships 
 # Airship Attributes #
 # Airship Parameters: Payload,Speed,FleetSize,PayloadFraction,FuelTankFraction,FinenessRatio
-dataDOE = np.array([3.,32.,1.0,0.3,0.05,3])
+dataDOE = np.array([1.,44-3.,1.0,0.3,0.05,3])
 FleetSize = dataDOE[2]
 airshipAttributes = ADC.DesignAirship(dataDOE) # useful payload, fuel capacity, footprint
 airshipFleet = [airshipClass.Airship(env, a, airshipAttributes, hub, cities, Workday)

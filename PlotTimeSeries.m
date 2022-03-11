@@ -24,20 +24,22 @@ Activity4 = output2.Activity(airship21);
 figure(1)
 plot(SimulationTime1,PayloadLevel1, 'r','LineWidth',5)
 hold on
-plot(SimulationTime2,PayloadLevel2, 'g','LineWidth',4)
+% plot(SimulationTime2,PayloadLevel2, 'g','LineWidth',4)
 plot(SimulationTime3,PayloadLevel3, 'Color', [0.6350 0.0780 0.1840],'LineWidth',3)
-plot(SimulationTime4,PayloadLevel4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
-legend('27-0','27-1','26-0','26-1')
+% plot(SimulationTime4,PayloadLevel4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
+% legend('27-0','27-1','26-0','26-1')
+legend('+','-')
 hold off
 % xlim([2335,2345])
 
 figure(2)
 plot(SimulationTime1,Activity1, 'r','LineWidth',5)
 hold on
-plot(SimulationTime2,Activity2, 'g','LineWidth',4)
+% plot(SimulationTime2,Activity2, 'g','LineWidth',4)
 plot(SimulationTime3,Activity3, 'Color', [0.6350 0.0780 0.1840],'LineWidth',3)
-plot(SimulationTime4,Activity4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
-legend('27-0','27-1','26-0','26-1')
+% plot(SimulationTime4,Activity4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
+% legend('27-0','27-1','26-0','26-1')
+legend('+','-')
 % xlim([2335,2345])
 hold off
 %%

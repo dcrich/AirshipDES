@@ -6,9 +6,11 @@ def DesignAirship(airshipParameters):
         Payload = round(airshipParameters[0])
         CruiseSpeed = round(airshipParameters[1])
         FleetSize = airshipParameters[2]
-        PayloadFraction = airshipParameters[3]
-        FuelTankFraction = airshipParameters[4]
-        FinenessRatio = airshipParameters[5]
+        LoadThreshold = airshipParameters[3]
+        AvgLoadRate = airshipParameters[4]
+        PayloadFraction = airshipParameters[5]
+        FuelTankFraction = airshipParameters[6]
+        FinenessRatio = airshipParameters[7]
        
         airshipAttributes = np.zeros(50)
         airshipAttributes[0],airshipAttributes[1]  = calculate_useful_payload(Payload, FuelTankFraction)
@@ -19,6 +21,8 @@ def DesignAirship(airshipParameters):
         airshipAttributes[9] = FuelTankFraction
         airshipAttributes[10] = FinenessRatio
         airshipAttributes[11] = FleetSize
+        airshipAttributes[12] = LoadThreshold
+        airshipAttributes[13] = AvgLoadRate
 
         return airshipAttributes
 
