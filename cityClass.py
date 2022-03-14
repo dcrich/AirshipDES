@@ -6,12 +6,11 @@ import simpy
 
 class City:
     """"""
-    def __init__(self, env, id, LatLon, fruit, FarmerCount, boatCount, CityToHubBoatDistance, LoadingResources):
+    def __init__(self, env, id, LatLon, fruit, boatCount, CityToHubBoatDistance, LoadingResources):
         self.env = env
         self.LatLon = LatLon
         self.ID = id
         self.CityToHubBoatDistance = CityToHubBoatDistance
-        self.FarmerCount = FarmerCount
         # fruit data
         # self.ProducedGoods = fruit.DailyCityFruitProduction_TonsPerDay[id,:].copy()
         self.AvailableGoods = fruit.DailyCityFruitProduction_TonsPerDay[id].copy() # tons of goods available each day, constant throughout

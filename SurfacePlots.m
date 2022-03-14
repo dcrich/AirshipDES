@@ -5,8 +5,8 @@ if false %exist('uniform12149.mat','file')
     load uniform12149.mat
 else
     steps = [1,1,1];
-%     steps = [2,2,1];
-%     steps = [3,5,1];
+    steps = [2,2,1];
+    steps = [2,5,1];
 %     steps = [5,10,1];
     file = uigetfile('*.csv');
     output = readtable(file);

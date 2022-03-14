@@ -25,22 +25,24 @@ def generate_new_cities(numberOfNewCities, hubLatLon, cityCoordinates):
     londistMEAN = np.mean(londist)
     londistSTD = np.std(londist)
     randomseed = 70
+    newCityDistances = np.zeros(numberOfNewCities)
     for i in range(numberOfNewCities):
         randomlatdist = np.abs(np.random.default_rng(randomseed).normal(latdistMEAN,latdistSTD))
         newLat = round(hubLat + randomlatdist,3)
         newLon = round(hubLon + np.random.choice([-1,1]) * np.random.default_rng(7*randomseed).normal(londistMEAN,londistSTD),3)
         cityCoordinates.append([newLat,newLon])
+        newCityDistances[i] = np.round(distance_between_coordinates(hubLatLon, [newLat,newLon]),1)
         randomseed+=1
-    return cityCoordinates
+    return cityCoordinates,newCityDistances
 
-# def distance_between_coordinates(latlon1, latlon2):
-#         lat1 = latlon1[0] * np.pi / 180
-#         lon1 = latlon1[1] * np.pi / 180
-#         lat2 = latlon2[0] * np.pi / 180
-#         lon2 = latlon2[1] * np.pi / 180
-#         # distance in nm
-#         distanceBetweenCoord = 6371 * 2 * np.arcsin( np.sqrt( (np.sin((lat1-lat2)/2))**2 + np.cos(lat1)*np.cos(lat2)*(np.sin((lon1-lon2)/2))**2 ))
-#         return distanceBetweenCoord
+def distance_between_coordinates(latlon1, latlon2):
+        lat1 = latlon1[0] * np.pi / 180
+        lon1 = latlon1[1] * np.pi / 180
+        lat2 = latlon2[0] * np.pi / 180
+        lon2 = latlon2[1] * np.pi / 180
+        # distance in nm
+        distanceBetweenCoord = 6371 * 2 * np.arcsin( np.sqrt( (np.sin((lat1-lat2)/2))**2 + np.cos(lat1)*np.cos(lat2)*(np.sin((lon1-lon2)/2))**2 ))
+        return distanceBetweenCoord
 
 
 

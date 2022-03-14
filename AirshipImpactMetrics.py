@@ -55,6 +55,7 @@ class AirshipImpactMetrics:
         goodsAfter = self.Fruit.TotalFruitProduction - sumProduceLossWithAirship
         goodsBefore = self.Fruit.TotalFruitProduction - CropLossFromData
         self.I_CropLoss = goodsAfter - goodsBefore # imperial tons of fruit
+        sumProduceLossWithAirship = 0.0
         for boat in self.Boats:
             sumProduceLossWithAirship += np.sum(boat.FruitLossAfterBoat) 
         goodsAfter = self.Fruit.TotalFruitProduction - sumProduceLossWithAirship

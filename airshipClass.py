@@ -46,9 +46,13 @@ class Airship:
         self.FuelToNextCity = 0.0
         # self.TimeUtilized = np.zeros(365,dtype=float)
         self.TimeEndedWorkday = np.zeros(365,dtype=float)
+        self.DailyOverOrUnderTime = np.zeros(365,dtype=float)
         self.DailyFuelConsumption = np.zeros(365,dtype=float)
         self.SimulationLogic = [0] # 0 = start working, 1 = to_city, 2 = to_hub, 3 = end_day
         self.loadWaitTime = 0.0
+        self.RefuelTime = np.zeros(365,dtype=float)
+        self.MaintenanceTime = np.zeros(365,dtype=float)
+        self.UnloadTime = np.zeros(365,dtype=float)
 
         # status variables
         self.StillWorkday = True
@@ -116,6 +120,7 @@ class Airship:
         #print(self.ID + ' done working at %.2f'%self.env.now)
         self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -6, self.PayloadRemaining, self.FuelRemaining]], axis=0)
         self.TimeEndedWorkday[self.CurrentDay] = self.env.now
+        self.DailyOverOrUnderTime[self.CurrentDay] = self.EndHourWorkday - self.env.now # negative if undertime, positive if overtime
         self.work_clock()
         timeUntilNextWorkday = self.StartHourWorkday - self.env.now
         """DOES THIS AFFECT THE OTHER AIRSHIP INSTANCE???????????????????????????????"""
@@ -243,9 +248,8 @@ class Airship:
             unloadingRate = np.abs(np.random.default_rng().normal(self.Hub.UnloadingRate,0.01))
             timeToUnload = goodsUnloaded * unloadingRate
             yield self.env.timeout(timeToUnload)
-
+            self.UnloadTime[self.CurrentDay] += timeToUnload
             #print(self.ID + ' done unloading at %.2f'%self.env.now)
-
             self.PayloadRemaining = self.UsefulPayload
             self.Hub.RecievedGoods[self.CurrentDay] += goodsUnloaded
 
@@ -256,11 +260,12 @@ class Airship:
         """
         with self.Hub.RefuelResource.request() as refuelReq:
             yield refuelReq
-            refuelTime = np.abs(np.random.default_rng().normal(self.Hub.AvgRefuelTime,0.01))
+            refuelTime = np.abs(np.random.default_rng().normal(self.Hub.AvgRefuelTime,0.001))
             yield self.env.timeout(refuelTime)
             #print(self.ID + ' done refueling at %.2f'%self.env.now)
             fuelUsed = self.FuelCapacity - self.FuelRemaining
             self.DailyFuelConsumption[self.CurrentDay] += fuelUsed
+            self.RefuelTime[self.CurrentDay] += refuelTime
             if self.FuelRemaining < 0:
                 raise Exception("Ran Out of Fuel - " + str(self.Payload)+'-'+str(self.CruiseSpeed)+'-'+str(self.FleetSize)+'-at '+str(self.env.now))
             self.FuelRemaining = self.FuelCapacity
@@ -274,6 +279,7 @@ class Airship:
             yield repairReq
             repairTime = np.abs(np.random.default_rng().normal(self.Hub.AvgRepairTime,0.75))
             yield self.env.timeout(repairTime)
+            self.MaintenanceTime[self.CurrentDay] += repairTime
             #print(self.ID + ' done maintenance at %.2f'%self.env.now)
             
         

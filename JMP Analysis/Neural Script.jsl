@@ -1,0 +1,97 @@
+
+model = Neural(
+	Y( :Boat Trip Loss ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 4 ), NTanH2( 4 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+fd << Generate C Code( Formulas( predictor ) ); 
+
+model = Neural(
+	Y( :Crop Loss ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 4 ), NTanH2( 4 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+fd << Generate C Code( Formulas( predictor ) ); 
+
+
+model = Neural(
+	Y( :Forest Loss ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 4 ), NTanH2( 4 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+fd << Generate C Code( Formulas( predictor ) ); 
+
+
+model = Neural(
+	Y( :Income ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 4 ), NTanH2( 4 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+fd << Generate C Code( Formulas( predictor ) ); 
+
+
+model = Neural(
+	Y( :Time Savings ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 4 ), NTanH2( 4 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+fd << Generate C Code( Formulas( predictor ) ); 
+
+
+
+
+
+
+
+
+/*model = Neural(
+	Y( :Income, :Boat Trip Loss, :Crop Loss, :Forest Loss, :Time Savings ),
+	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
+	Informative Missing( 0 ),
+	Validation Method( "Holdback", 0.3333 ),
+	Fit( NTanH( 3 ), NLinear( 3 ), NTanH2( 3 ), NLinear2( 3 ) )
+);
+fd = Formula Depot();
+predictor = model << (Fit[1] << Publish Prediction Formula);;
+fd << Generate Python Code( Formulas( predictor ) ); */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

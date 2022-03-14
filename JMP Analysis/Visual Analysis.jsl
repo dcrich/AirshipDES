@@ -1,0 +1,105 @@
+dt = current data table();
+dt << Color or Mark by Column( "Payload", Color Theme( "Spectral" ) );
+
+Surface Plot(
+	Columns(
+		:Payload, :CruiseSpeed, :Boat Trip Loss, :Crop Loss, :Forest Loss, :Income,
+		:Time Savings
+	),
+	Datapoints Choice( "Points" ),
+	Surface Color Theme( "Green to Black to Red" ),
+	Surface Color Theme2( "Green to White to Red" ),
+	Surface Color Theme3( "White to Black" ),
+	Surface Color Theme4( "Blue to Gray to Red" ),
+	Response Column Color Theme( "Blue to Green to Red" ),
+	Response Column Color Theme2( "Blue to Gray to Orange" ),
+	Response Column Color Theme3( "Spectral" ),
+	Response Column Color Theme4( "Jet" ),
+	Response( :Boat Trip Loss ),
+	Surface Color Method( "Solid", "Solid", "Solid", "Solid" ),
+	SetVariableAxis( :Payload, Axis Data( {} ) ),
+	SetVariableAxis( :CruiseSpeed, Axis Data( {} ) ),
+	SetZAxis( :Boat Trip Loss, Current Value( -1500 ) ),
+	SetXVariable( :Payload ),
+	SetYVariable( :CruiseSpeed ),
+	Frame3D(
+		Set Graph Size( 1055, 771 ),
+		Set Rotation( -63.8126422464002, -0.0221513799731298, -122.682209418197 ),
+		Set Text Scale( 0.6326 ),
+		Set Marker Transparency( 0.6957 ),
+		Set Marker Scale( 3.9739 ),
+		Set View Zoom( 0.7815 ),
+		Set View Perspective( 0.01 )
+	),
+	Local Data Filter(
+		Add Filter(
+			columns(
+				:Payload, :CruiseSpeed, :FleetSize, :LoadThreshold, :AvgLoadRate
+			)
+		)
+	)
+);
+
+
+
+
+Surface Plot(
+	Columns(
+		:Payload, :CruiseSpeed, :Predicted Boat Trip Loss, :Predicted Crop Loss,
+		:Predicted Forest Loss, :Predicted Income, :Predicted Time Savings,
+		:Boat Trip Loss
+	),
+	Datapoints Choice( "Points" ),
+	Datapoints Choice2( "Points" ),
+	Datapoints Choice3( "Points" ),
+	Datapoints Choice4( "Points" ),
+	Surface Color Theme( "Spectral" ),
+	Surface Color Theme2( "Spectral" ),
+	Surface Color Theme3( "Spectral" ),
+	Surface Color Theme4( "Spectral" ),
+	Surface Gradient Type( "Continuous Gradients" ),
+	Surface Gradient Type2( "Continuous Gradients" ),
+	Surface Gradient Type3( "Continuous Gradients" ),
+	Surface Gradient Type4( "Continuous Gradients" ),
+	Response Column Fill( "Continuous Gradients" ),
+	Response Column Color Theme( "Blue to Green to Red" ),
+	Response Column Color Theme2( "Blue to Gray to Orange" ),
+	Response Column Color Theme3( "Spectral" ),
+	Response Column Color Theme4( "Jet" ),
+	Formula(
+		"Predicted Boat Trip Loss", "Predicted Crop Loss", "Predicted Forest Loss",
+		"Predicted Income"
+	),
+	Response( :Predicted Boat Trip Loss ),
+	Surface Color Method(
+		:Predicted Boat Trip Loss, :Predicted Crop Loss, :Predicted Forest Loss,
+		:Predicted Income
+	),
+	SetVariableAxis( :Payload, Axis Data( {} ) ),
+	SetVariableAxis( :CruiseSpeed, Axis Data( {} ) ),
+	SetVariableAxis( :FleetSize, Current Value( 0.9348 ) ),
+	SetVariableAxis( :LoadThreshold, Current Value( 1.0609 ), Axis Data( {} ) ),
+	SetZAxis( :Predicted Boat Trip Loss, Current Value( 15000 ) ),
+	SetXVariable( :Payload ),
+	SetYVariable( :CruiseSpeed ),
+	Iso Value( 0, -3253.78193604584 ),
+	Iso Value( 1, 640.989391683011 ),
+	Iso Value( 2, 8106.50232099449 ),
+	Iso Value( 3, 1084149.64780829 ),
+	Frame3D(
+		Set Graph Size( 1000, 771 ),
+		Set Rotation( -75.3426882454388, -4.15290067774167, -138.228126872438 ),
+		Set Text Scale( 0.6326 ),
+		Set Marker Transparency( 0.6957 ),
+		Set Marker Scale( 0.2076 ),
+		Set View Zoom( 0.7815 ),
+		Set View Perspective( 0.01 )
+	),
+	Local Data Filter(
+		Add Filter(
+			columns(
+				:Payload, :CruiseSpeed, :FleetSize, :LoadThreshold, :AvgLoadRate
+			)
+		)
+	)
+));

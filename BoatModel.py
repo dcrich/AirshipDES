@@ -64,11 +64,13 @@ class Boats:
         if np.sum(self.FruitLoss) >= np.sum(self.GoodsSoldNoAirship):
             self.UpdatedNumberOfBoats = self.NumberOfBoats
             self.FruitLossAfterBoat = self.GoodsLostNoAirship
+            self.ChangeInTrips = 0.0
         elif np.max(self.TripsPerDayWithAirship) > self.MaxDailyTrips:
             # update trip array to cap at maxtrips
             self.TripsPerDayWithAirship[self.TripsPerDayWithAirship > self.MaxDailyTrips] = self.MaxDailyTrips
             self.FruitLossAfterBoat = self.FruitLoss - self.Capacity * self.TripsPerDayWithAirship
             self.UpdatedNumberOfBoats = self.NumberOfBoats
+            self.ChangeInTrips = 0.0
         # check if average number of boats needed is less than all boats
         elif AverageBoatsNeededWithAirship < self.NumberOfBoats:
             # update boat count
@@ -76,11 +78,13 @@ class Boats:
             self.UpdatedMaxDailyTrips = self.UpdatedNumberOfBoats * self.MaxDailyTripsPerBoat
             self.TripsPerDayWithAirship[self.TripsPerDayWithAirship > self.UpdatedMaxDailyTrips] = self.UpdatedMaxDailyTrips
             self.FruitLossAfterBoat = self.FruitLoss - self.Capacity * self.TripsPerDayWithAirship
+            self.FruitLossAfterBoat[self.FruitLossAfterBoat<0.0] = 0.0
+            self.ChangeInTrips = np.sum( self.TripsPerDay - self.TripsPerDayWithAirship)
         else:
             self.UpdatedNumberOfBoats = self.NumberOfBoats
             self.FruitLossAfterBoat = self.FruitLoss - self.Capacity * self.TripsPerDayWithAirship
+            self.ChangeInTrips = np.sum( self.TripsPerDay - self.TripsPerDayWithAirship)
         
-        self.ChangeInTrips = np.sum( self.TripsPerDay - self.TripsPerDayWithAirship)
         self.BoatSurplus = self.NumberOfBoats - self.UpdatedNumberOfBoats
         self.FruitLossAfterBoat[self.FruitLossAfterBoat<0] = 0.0   # removes negative values
         self.DailyBoatTime = self.TripDistance / self.BoatSpeed * self.TripsPerDayWithAirship + 2.0*self.LoadTime * self.TripsPerDayWithAirship   # should be zero if airship gets all goods

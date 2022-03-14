@@ -28,12 +28,11 @@ from cityDistributionGenerator import generate_new_cities
 # DOE_filename = "AirshipDesigns750fleet.txt" 
 # DOE = pd.read_csv(DOE_filename) #load DOE data
 # AirshipDesigns = DOE.values
-def run_simulation(AirshipDesigns):
-    numberOfNewCities = 0
+def run_simulation(AirshipDesigns,numberOfNewCities = 0):
     print(datetime.now())
     AirshipDesignParameterTracker = np.zeros((np.size(AirshipDesigns,0),17),dtype=float)
     ImpactTracker = np.zeros((np.size(AirshipDesigns,0),5),dtype=float)
-    OtherOuputs = np.zeros((np.size(AirshipDesigns,0),20),dtype=float)
+    OtherOuputs = np.zeros((np.size(AirshipDesigns,0),40),dtype=float)
     counter = 0 
     tic = time.perf_counter()
     for dataDOE in AirshipDesigns:
@@ -41,7 +40,7 @@ def run_simulation(AirshipDesigns):
         np.random.seed(96)
         SimTime = 365.0 * 24.0 # hours
         Workday = [8.0,17.0] # start hour, end hour
-        FruitData = fp.fruit(0)
+        FruitData = fp.fruit(numberOfNewCities)
 
         env = simpy.Environment()
 
@@ -64,17 +63,23 @@ def run_simulation(AirshipDesigns):
                             [-3.276, -60.190],  # Iranduba
                             [-3.387, -60.344],  # Jutai
                             [-3.441, -60.462]]  # Manaquiri
-        if numberOfNewCities > 0:
-            cityCoordinates = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
+        
         # cityCoordinates = [ [-3.293, -60.196],  
         #                     [-3.293, -59.854], 
         #                     [-3.010, -60.025]]
         # AvgLoadingRate = 0.1 # hours/ton
         LoadingResources = 1
-        FarmerCount = [77., 166., 47., 97.]
-        boatCount = [5., 7., 7., 12.] # [5.+5., 7.+28., 7.+4., 12.+7.] # with manaus boats divided between
-        CityToHubBoatDistance =  [8.8, 19.3, 39.1, 48.6] #nautical miles
-        cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, FarmerCount[c], boatCount[c], 
+        # FarmerCount = [77., 166., 47., 97.]
+        boatCount = np.array([5., 7., 7., 12.]) # [5.+5., 7.+28., 7.+4., 12.+7.] # with manaus boats divided between
+        CityToHubBoatDistance =  np.array([8.8, 19.3, 39.1, 48.6]) #nautical miles
+        if numberOfNewCities > 0:
+            cityCoordinates,newcitydistances = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
+            boatM = np.mean(boatCount)
+            boatS = np.std(boatCount)
+            newboats = np.round(np.abs(np.random.default_rng(96).normal(boatM,boatS,numberOfNewCities)),0)
+            boatCount = np.append(boatCount,newboats)
+            CityToHubBoatDistance = np.append(CityToHubBoatDistance,newcitydistances)
+        cities = [cityClass.City(env, c, cityCoordinates[c], FruitData, boatCount[c], 
                                 CityToHubBoatDistance[c], LoadingResources)
                 for c in range(len(cityCoordinates))]
 
@@ -100,11 +105,25 @@ def run_simulation(AirshipDesigns):
         totalTrips = 0
         emptyTrips = 0
         loadWaitTime = 0.0
+        TotalHoursWorked = 0.0
+        HoursWorked = np.zeros((1,int(FleetSize)))
+        unloadTime = 0.0
+        refuelTime = 0.0
+        maintenanceTime = 0.0
+        a=0
         for airship in airshipFleet:
             fuelUsed += np.sum(airship.DailyFuelConsumption)
             totalTrips += airship.citiesVisitedInTotal
             emptyTrips += airship.EmptyTrips
             loadWaitTime += airship.loadWaitTime
+            tempvar = np.sum(Workday[0] + airship.DailyOverOrUnderTime)
+            TotalHoursWorked += tempvar
+            HoursWorked[0,a] = tempvar
+            unloadTime += airship.UnloadTime
+            refuelTime += airship.RefuelTime
+            maintenanceTime += airship.MaintenanceTime
+            a+=1
+
         AirshipDesignParameterTracker[counter,:] = airshipFleet[0].return_airship_parameters()
         ImpactTracker[counter,:] = impactMetrics.return_impact_array()
         OtherOuputs[counter,0] = impactMetrics.AirshipRevenue
@@ -118,12 +137,24 @@ def run_simulation(AirshipDesigns):
         OtherOuputs[counter,8] = np.sum(cities[0].AvailableGoods) #Careiro
         OtherOuputs[counter,9] = np.sum(cities[1].AvailableGoods) #Iranduba
         OtherOuputs[counter,10] = np.sum(cities[2].AvailableGoods) #Jutai
-        # OtherOuputs[counter,11] = np.sum(cities[3].AvailableGoods) #Manaquiri
+        OtherOuputs[counter,11] = np.sum(cities[3].AvailableGoods) #Manaquiri
         OtherOuputs[counter,12] = impactMetrics.AirshipOperationalCostPerTon
         OtherOuputs[counter,13] = impactMetrics.BoatCostPerTonWithAirship
         OtherOuputs[counter,14] = impactMetrics.BoatCostPerTonNoAirship
         OtherOuputs[counter,15] = impactMetrics.I_CropLoss_IncludingBoat
-
+        OtherOuputs[counter,16] = TotalHoursWorked
+        OtherOuputs[counter,17] = TotalHoursWorked / (FleetSize * 365.0 * Workday[0])
+        OtherOuputs[counter,18] = TotalHoursWorked / (FleetSize * 365.0 * 24.0)
+        OtherOuputs[counter,19] = np.sum(unloadTime)
+        OtherOuputs[counter,20] = np.sum(refuelTime)
+        OtherOuputs[counter,21] = np.sum(maintenanceTime)
+        lastcolumn = 22
+        # lastcolumn2 = lastcolumn+int(FleetSize)
+        # tempvar2 = HoursWorked
+        # OtherOuputs[counter,lastcolumn:lastcolumn2] = tempvar2
+        if numberOfNewCities>0:
+            for i in range(numberOfNewCities):
+                OtherOuputs[counter,lastcolumn+i] = np.sum(cities[4+i].AvailableGoods) #new city
         counter += 1
 
 
@@ -161,16 +192,28 @@ def run_simulation(AirshipDesigns):
             "Total Trips": OtherOuputs[:,5],
             "Empty Trips": OtherOuputs[:,6],
             "Load Wait Time": OtherOuputs[:,7],
-            "Lost Careio": OtherOuputs[:,8],
-            "Lost Iranduba": OtherOuputs[:,9],
-            "Lost Jutai": OtherOuputs[:,10],
-            "Lost Manaquiri": OtherOuputs[:,11],
             "AirshipCostPerTon":OtherOuputs[:,12],
             "Boat Cost Per Ton Airship":OtherOuputs[:,13],
             "Boat Cost Per Ton Only":OtherOuputs[:,14],
-            "Crop Loss Including Boat": OtherOuputs[:,15]
+            "Crop Loss Including Boat": OtherOuputs[:,15],
+            "Total Usage Hours Fleet":OtherOuputs[:,16],
+            "Utilization Fraction Fleet":OtherOuputs[:,17],
+            "Real Utilization Fraction Fleet":OtherOuputs[:,18],
+            "Unload Time":OtherOuputs[:,19],
+            "Refuel Time":OtherOuputs[:,20],
+            "Maintenance Time":OtherOuputs[:,21],
+            "Lost Careio": OtherOuputs[:,8],
+            "Lost Iranduba": OtherOuputs[:,9],
+            "Lost Jutai": OtherOuputs[:,10],
+            "Lost Manaquiri": OtherOuputs[:,11]
         }
     )
+    if numberOfNewCities > 0:
+        newcityoutputs = pd.DataFrame({})
+        for i in range(numberOfNewCities):
+            varname = "New City "+str(i)
+            outputImpacts.insert(outputImpacts.shape[1],varname,OtherOuputs[:,lastcolumn+i])
+    
     print(datetime.now())
     dtstr = datetime.now().strftime("%Y-%m-%d_%I-%M-%S-%p")
     outputImpacts.to_csv('ExperimentImpacts'+dtstr+'.csv')
@@ -208,11 +251,11 @@ def run_simulation(AirshipDesigns):
 #     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[4,1])
 # run_simulation(AirshipDesigns)
 
-# Load Rate Sensitivity - sparse
-AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
-    payloadrange=[1,31], speedrange=[20,81], fleetrange=[1,6], 
-    threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [2,2,1], setlength=[1,5])
-run_simulation(AirshipDesigns)
+# # Load Rate Sensitivity - sparse
+# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+#     payloadrange=[1,31], speedrange=[20,81], fleetrange=[1,6], 
+#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [2,2,1], setlength=[1,5])
+# run_simulation(AirshipDesigns)
 
 # # Load Rate Sensitivity Test - Very sparse
 # AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
@@ -220,7 +263,32 @@ run_simulation(AirshipDesigns)
 #     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[1,4])
 # run_simulation(AirshipDesigns)
 
+# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+#     payloadrange=[1,26], speedrange=[20,91], fleetrange=[1,6], 
+#     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [1,5,1], setlength=[3,3])
+# run_simulation(AirshipDesigns)
 
+# # Main with Threshold
+# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+#     payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,5], 
+#     threshrange=[0.0,1], loadraterange=[0.2,0.5], setsize = [1,5,1], setlength=[10,1])
+# run_simulation(AirshipDesigns)
+
+# Stretch Threshold
+AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+    payloadrange=[1,31], speedrange=[20,91], fleetrange=[1,5], 
+    threshrange=[1.0,10.0], loadraterange=[0.2,0.5], setsize = [2,10,1], setlength=[10,1])
+run_simulation(AirshipDesigns)
+
+#TESTS
+# Main
+# AirshipDesigns, p,s,f,pf,ff,fr = generate_designs(
+#     payloadrange=[1,26], speedrange=[20,81], fleetrange=[1,3], 
+#     threshrange=[0.5,1], loadraterange=[0.2,0.5], setsize = [20,40,1], setlength=[1,1])
+# run_simulation(AirshipDesigns)
+
+# AirshipDesigns = np.array([[24,	20,	1,	0.5,	0.2,	0.3,	0.05,	3]])
+# run_simulation(AirshipDesigns)
 
 
 
@@ -232,8 +300,9 @@ run_simulation(AirshipDesigns)
 ###########################################
 ################ LEFT OFF: ################
 ###########################################
-# Bugs when visiting multiple cities
-#   - How can the airships know if another airship is already enroute and will pick up the cargo?
+# Other values of interest
+#   - Refuel Time, Maintenance Time, Unload Time, 
+#   - Utilization (sitting around during workday, time between workdays)
 ###########################################
 ###########################################
 ###########################################
