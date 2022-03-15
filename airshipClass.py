@@ -120,7 +120,7 @@ class Airship:
         #print(self.ID + ' done working at %.2f'%self.env.now)
         self.Hub.SimulationTracker = np.append(self.Hub.SimulationTracker,[[self.env.now, self.ID, -6, self.PayloadRemaining, self.FuelRemaining]], axis=0)
         self.TimeEndedWorkday[self.CurrentDay] = self.env.now
-        self.DailyOverOrUnderTime[self.CurrentDay] = self.EndHourWorkday - self.env.now # negative if undertime, positive if overtime
+        self.DailyOverOrUnderTime[self.CurrentDay] = self.EndHourWorkday - self.env.now # positive if undertime, negative if overtime
         self.work_clock()
         timeUntilNextWorkday = self.StartHourWorkday - self.env.now
         """DOES THIS AFFECT THE OTHER AIRSHIP INSTANCE???????????????????????????????"""

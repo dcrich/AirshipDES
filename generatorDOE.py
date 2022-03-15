@@ -47,7 +47,7 @@ def generate_designs(payloadrange=[1,31], speedrange=[20,101], fleetrange=[1,6],
         print("Estimated Time To Complete: " + str(estimatedTimeToComplete) + " minutes")
     else:
         print("Estimated Time To Complete: " + str(estimatedTimeToComplete/60.0) + " hours")
-    return designset, payloadG, speedG, fleetG, payloadfraction, fueltankfraction, finenessratio
+    return designset
 
 # fig = plt.figure()
 # ax = fig.add_subplot(projection='3d')

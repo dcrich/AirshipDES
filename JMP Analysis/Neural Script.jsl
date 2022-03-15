@@ -7,8 +7,10 @@ model = Neural(
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
-predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+predictor = model << (Fit[1] << Publish Prediction Formula);
 fd << Generate C Code( Formulas( predictor ) ); 
+//model << (Fit[1] << Save Profile Formulas);
+
 
 model = Neural(
 	Y( :Crop Loss ),
@@ -18,8 +20,9 @@ model = Neural(
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
-predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+predictor = model << (Fit[1] << Publish Prediction Formula);
 fd << Generate C Code( Formulas( predictor ) ); 
+//model << (Fit[1] << Save Profile Formulas);
 
 
 model = Neural(
@@ -30,8 +33,9 @@ model = Neural(
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
-predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+predictor = model << (Fit[1] << Publish Prediction Formula);
 fd << Generate C Code( Formulas( predictor ) ); 
+//model << (Fit[1] << Save Profile Formulas);
 
 
 model = Neural(
@@ -42,8 +46,9 @@ model = Neural(
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
-predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+predictor = model << (Fit[1] << Publish Prediction Formula);
 fd << Generate C Code( Formulas( predictor ) ); 
+//model << (Fit[1] << Save Profile Formulas);
 
 
 model = Neural(
@@ -54,9 +59,9 @@ model = Neural(
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
-predictor = model << (Fit[1] << Publish Prediction Formula)<< (Fit[1] << Save Profile Formulas);;
+predictor = model << (Fit[1] << Publish Prediction Formula);
 fd << Generate C Code( Formulas( predictor ) ); 
-
+//model << (Fit[1] << Save Profile Formulas);
 
 
 

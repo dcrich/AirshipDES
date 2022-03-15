@@ -5,7 +5,9 @@ Need to Test
 import numpy as np
 
 def calculate_operational_cost(airship, fleetsize, farmerAmortizationFraction=0.05):
-    airship.CostToOperate = airship_costs(airship,fleetsize,farmerAmortizationFraction)
+	CostToOperate, heliumRefillCost, airshipCostPerAirshipInFleet = airship_costs(airship,fleetsize,farmerAmortizationFraction)
+	airship.CostToOperate = CostToOperate
+	return airshipCostPerAirshipInFleet, heliumRefillCost
 
 
 def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
@@ -133,7 +135,7 @@ def airship_costs(airship,fleetsize,percentAmortizationPayedByFarmers):
 	
 	USDtoREALS = 5.14 # as of 2/16
 	operationalCostForFarmers = USDtoREALS * (heliumRefillCost + fuelCost + airshipAmortizationCost * percentAmortizationPayedByFarmers)
-	return operationalCostForFarmers
+	return operationalCostForFarmers, heliumRefillCost, airshipCostPerAirshipInFleet
 	# missionCostNoCrew = heliumRefillCost + fuelCost + airshipAmortizationCost + landAmortizationCost + groundHandlingCost # autonomous option
 	# percentHeliumCostAuton = 100*heliumRefillCost/missionCostNoCrew
 	# percentFuelCostAuton = 100*fuelCost/missionCostNoCrew

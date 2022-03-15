@@ -47,7 +47,8 @@ Surface Plot(
 	Columns(
 		:Payload, :CruiseSpeed, :Predicted Boat Trip Loss, :Predicted Crop Loss,
 		:Predicted Forest Loss, :Predicted Income, :Predicted Time Savings,
-		:Boat Trip Loss
+		:Boat Trip Loss, :Crop Loss,
+		:Forest Loss, :Income, :Time Savings
 	),
 	Datapoints Choice( "Points" ),
 	Datapoints Choice2( "Points" ),
@@ -75,8 +76,8 @@ Surface Plot(
 		:Predicted Boat Trip Loss, :Predicted Crop Loss, :Predicted Forest Loss,
 		:Predicted Income
 	),
-	SetVariableAxis( :Payload, Axis Data( {} ) ),
-	SetVariableAxis( :CruiseSpeed, Axis Data( {} ) ),
+	SetVariableAxis( :Payload, Axis Data( {Min( 1 ), Max( 31 )} ) ),
+	SetVariableAxis( :CruiseSpeed, Axis Data( {Min( 20 ), Max( 91 )} ) ),
 	SetVariableAxis( :FleetSize, Current Value( 0.9348 ) ),
 	SetVariableAxis( :LoadThreshold, Current Value( 1.0609 ), Axis Data( {} ) ),
 	SetZAxis( :Predicted Boat Trip Loss, Current Value( 15000 ) ),
@@ -102,4 +103,4 @@ Surface Plot(
 			)
 		)
 	)
-));
+);
