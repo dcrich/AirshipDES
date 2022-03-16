@@ -3,7 +3,8 @@ model = Neural(
 	Y( :Boat Trip Loss ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
+	Set Random Seed( 3 ),
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
@@ -16,7 +17,8 @@ model = Neural(
 	Y( :Crop Loss ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
+	Set Random Seed( 3 ),
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
@@ -29,7 +31,8 @@ model = Neural(
 	Y( :Forest Loss ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
+	Set Random Seed( 3 ),
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
@@ -42,7 +45,8 @@ model = Neural(
 	Y( :Income ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
+	Set Random Seed( 3 ),
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
@@ -55,7 +59,8 @@ model = Neural(
 	Y( :Time Savings ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
+	Set Random Seed( 3 ),
 	Fit( NTanH( 4 ), NTanH2( 4 ) )
 );
 fd = Formula Depot();
@@ -73,7 +78,7 @@ fd << Generate C Code( Formulas( predictor ) );
 	Y( :Income, :Boat Trip Loss, :Crop Loss, :Forest Loss, :Time Savings ),
 	X( :Payload, :CruiseSpeed, :FleetSize, :LoadThreshold ),
 	Informative Missing( 0 ),
-	Validation Method( "Holdback", 0.3333 ),
+	Validation Method( "Holdback", 0.3 ),
 	Fit( NTanH( 3 ), NLinear( 3 ), NTanH2( 3 ), NLinear2( 3 ) )
 );
 fd = Formula Depot();

@@ -241,7 +241,7 @@ def run_simulation(AirshipDesigns,numberOfNewCities = 0):
 # Main
 AirshipDesigns = generate_designs(
     payloadrange=[1.,31.], speedrange=[20.,88.], fleetrange=[1.,5.], 
-    threshrange=[0.5,1.0], loadraterange=[0.2,0.5], setsize = [1,1,1], setlength=[1,1])
+    threshrange=[0.25,0.75], loadraterange=[0.2,0.5], setsize = [1,1,1], setlength=[2,1])
 run_simulation(AirshipDesigns)
 
 # # Threshold Sensitivity - sparse
@@ -285,14 +285,14 @@ run_simulation(AirshipDesigns)
 #     threshrange=[1.0,10.0], loadraterange=[0.2,0.5], setsize = [2,10,1], setlength=[10,1])
 # run_simulation(AirshipDesigns)
 
-#TESTS
-# Main
+## TESTS
+# # Main
 # AirshipDesigns = generate_designs(
-#     payloadrange=[1,26], speedrange=[20,81], fleetrange=[1,3], 
-#     threshrange=[0.5,1], loadraterange=[0.2,0.5], setsize = [20,40,1], setlength=[1,1])
+#     payloadrange=[9.,31.], speedrange=[38.,88.], fleetrange=[1.,2.], 
+#     threshrange=[0.5,1.0], loadraterange=[0.2,0.5], setsize = [1,1,1], setlength=[1,1])
 # run_simulation(AirshipDesigns)
 
-# AirshipDesigns = np.array([[1.0, 20., 1.0, 1.0, 0.2, 0.3, 0.05, 3]])
+# AirshipDesigns = np.array([[16.0, 84., 1.0, 0.5, 0.2, 0.3, 0.05, 3]])
 # run_simulation(AirshipDesigns)
 
 

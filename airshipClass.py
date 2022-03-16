@@ -383,7 +383,8 @@ class Airship:
         goodsWeighting = 2.0
         self.CityGoodsRanking[:,1] = goodsWeighting * yesterdaysGoods + todaysGoods
         self.CityGoodsRanking = self.CityGoodsRanking[np.argsort(self.CityGoodsRanking[:, 1])]
-        
+        actualGoods = yesterdaysGoods + todaysGoods
+        # if self.PayloadRemaining > np.max(actualGoods) or self.PayloadRemaining > 0.5 * np.max(actualGoods) 
         if self.citiesVisitedInTrip < 1: # if first city of trip, visit city with highest priority
             self.CityPriorityList = np.flip(self.CityGoodsRanking[:,0]).astype(int)
         else: # if subsequent trip, so airship isn't completely empty, vist a city with less fruit first
