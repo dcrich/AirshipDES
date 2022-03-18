@@ -53,6 +53,7 @@ class Airship:
         self.RefuelTime = np.zeros(365,dtype=float)
         self.MaintenanceTime = np.zeros(365,dtype=float)
         self.UnloadTime = np.zeros(365,dtype=float)
+        
 
         # status variables
         self.StillWorkday = True
@@ -70,7 +71,7 @@ class Airship:
         self.EmptyTrips = 0
         self.NumberOfCities = np.size(cities,0)
         self.CityPriorityList = np.arange(0,self.NumberOfCities)
-
+        self.TripTracker = np.zeros((1+self.NumberOfCities,1+self.NumberOfCities))
         self.CostToOperate = 0.0
         self.FuelCost = 0.0
 
@@ -105,14 +106,17 @@ class Airship:
 
             elif self.AtHub and self.CitySelected: # at hub, city chosen
                 self.SimulationLogic.append(1)
+                self.TripTracker[0, self.NextCity+1] += 1
                 yield self.env.process(self.to_city())
             
             elif not self.AtHub and self.CitySelected: # not at hub, city chosen
                 self.SimulationLogic.append(1)
+                self.TripTracker[self.CurrentCity+1, self.NextCity+1] += 1
                 yield self.env.process(self.to_city())
            
             elif not self.AtHub and not self.CitySelected: # not at hub and no city chosen
                 self.SimulationLogic.append(2)
+                self.TripTracker[self.CurrentCity+1, 0] += 1
                 yield self.env.process(self.city_to_hub())
 
 

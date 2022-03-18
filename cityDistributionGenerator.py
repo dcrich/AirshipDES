@@ -55,8 +55,10 @@ def distance_between_coordinates(latlon1, latlon2):
 # import matplotlib.pyplot as plt
 # cityArray = np.asfarray(cityCoordinates)
 # plt.scatter(cityArray[:,1],cityArray[:,0], c="b", alpha=1)
-# newCityList = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
+# newCityList,newCityDistances = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
 # newcityarray = np.asfarray(newCityList)
 # plt.scatter(hubCoordinates[1],hubCoordinates[0], c="r")
 # plt.scatter(newcityarray[:,1],newcityarray[:,0], c="g", alpha=0.3)
+# np.savetxt('cities.txt',newcityarray,delimiter=',')
 # plt.show()
+

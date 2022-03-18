@@ -1,0 +1,27 @@
+Contour Plot(
+	X( :Payload, :CruiseSpeed ),
+	Y( :Income ),
+	Show Data Points( 1 ),
+	Fill Areas( 1 ),
+	Label Contours( 0 ),
+	Transform( "Range Normalized" ),
+	Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"1111",
+			ScaleBox,
+			{Legend Model(
+				1,
+				Properties(
+					0,
+					{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Width( 12 )} )},
+					Item ID( "Income", 1 )
+				)
+			)}
+		),
+		Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 )} ),
+		Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 )} ),
+		Dispatch( {}, "Contour Plot Graph", FrameBox, {Marker Size( 5 ), Marker Drawing Mode( "Normal" )} )
+	)
+)

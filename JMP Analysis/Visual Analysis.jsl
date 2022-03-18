@@ -1,6 +1,12 @@
 dt = current data table();
 dt << Color or Mark by Column( "Payload", Color Theme( "Spectral" ) );
 
+dt << select where( (:Payload == 2 & :CruiseSpeed == 29 & :FleetSize == 3 & :LoadThreshold == 1))
+//dt << select where( (:Payload == 2 & :CruiseSpeed == 29 & :FleetSize == 3 & :LoadThreshold == 1) & (:Payload == 3 & :CruiseSpeed == 21 & :FleetSize == 3 & :LoadThreshold == 0)  )
+dt << select where( :Crop Loss > 658 ) << Invert Row Selection << Hide << Exclude;
+dt << Select Dominant( {:Real Utilization Fraction Fleet, :CruiseSpeed}, {0, 0} )
+dt << Select Dominant( {:CruiseSpeed , :Real Utilization Fraction Fleet}, {0,0} )
+
 Surface Plot(
 	Columns(
 		:Payload, :CruiseSpeed, :Boat Trip Loss, :Crop Loss, :Forest Loss, :Income,
