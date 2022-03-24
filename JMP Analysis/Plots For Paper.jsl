@@ -1,0 +1,249 @@
+
+
+helium_vs_payload = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << Select Dominant( {:Payload, :Helium Refill Cost}, {0, 0} ) << Markers(1);
+
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :Payload ), Y( :Helium Refill Cost ) ),
+		Elements( Smoother( X, Y, Legend( 2 ) ), Points( X, Y, Legend( 3 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Payload",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"Helium Refill Cost",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Helium Refill Cost ($R)" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Payload (tons)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
+		)
+	);
+);
+
+
+fuel_vs_payload = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << select Where(((CruiseSpeed == 40) & (LoadThreshold >= 0.4226 & LoadThreshold <= 0.6845)))
+<< invert row selection << hide and exclude(1);
+dt << clear select;
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :Payload ), Y( :Fuel Used ) ),
+		Elements( Smoother( X, Y, Legend( 2 ) ), Points( X, Y, Legend( 3 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Fuel Used",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"Payload",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Total Fuel Consumption (tons)" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Payload (tons)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
+		)
+	);
+);
+
+
+
+
+fuel_vs_speed = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << select where(((Payload == 2) & (CruiseSpeed >= 20 & CruiseSpeed <= 87) & FleetSize == 3  & (LoadThreshold >= 0.3929 & LoadThreshold <= 0.6667)))<< invert row selection << hide and exclude(1);
+dt << clear select;
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :CruiseSpeed ), Y( :Fuel Used ) ),
+		Elements(  Points( X, Y, Legend( 3 ) ),Smoother( X, Y, Legend( 2 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Fuel Used",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"CruiseSpeed",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Total Fuel Consumption (tons)" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Cruise Speed (knots)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
+		)
+	);
+);
+
+
+utilization_vs_payload = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << select where(((CruiseSpeed == 77) & FleetSize == 2  & (LoadThreshold == 0.5)))<< invert row selection << hide and exclude(1);
+dt << clear select;
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :Payload ), Y( :Real Utilization Fraction Fleet ) ),
+		Elements( Smoother( X, Y, Legend( 2 ), Lambda( 0.005 ) ), Points( X, Y, Legend( 3 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Real Utilization Fraction Fleet",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"Payload",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Payload (tons)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
+		)
+	);
+);
+
+
+utilization_vs_speed = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << Select Dominant( {:Real Utilization Fraction Fleet, :CruiseSpeed}, {0, 0} );
+
+dt << clear select;
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :CruiseSpeed ), Y( :Real Utilization Fraction Fleet ) ),
+		Elements( Points( X, Y, Legend( 3 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Real Utilization Fraction Fleet",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"CruiseSpeed",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Cruise Speed (knots)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1]} )} )
+		)
+	);
+);
+
+
+utilization_vs_cost = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal designs
+//dt << Select Dominant( {:Real Utilization Fraction Fleet, :AirshipCostPerTon}, {0, 0} );
+
+dt << clear select;
+	Graph Builder(
+		Size( 650, 400 ),
+		Show Control Panel( 0 ),
+		Variables( X( :AirshipCostPerTon ), Y( :Real Utilization Fraction Fleet ) ),
+		Elements( Points( X, Y, Legend( 3 ) ) ),
+		SendToReport(
+			Dispatch(
+				{},
+				"Real Utilization Fraction Fleet",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch(
+				{},
+				"AirshipCostPerTon",
+				ScaleBox,
+				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+			),
+			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
+			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
+			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Operational Cost ($R/ton)" )} ),
+			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1]} )} )
+		)
+	);
+);
+
+

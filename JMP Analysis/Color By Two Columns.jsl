@@ -1,0 +1,20 @@
+// color by payload - fleet
+dt = Current Data Table();
+minPayload = Col Minimum( :Payload );
+maxPayload = Col Maximum( :Payload );
+minSpeed = Col Minimum( :FleetSize );
+maxSpeed = Col Maximum( :FleetSize );
+lengthDT = 40800;
+dt << Clear Select;
+//loop through data
+For( i = 1, i <= lengthDT, i++,
+	thepayload = dt:Payload[i];
+	thespeed = dt:FleetSize[i];
+
+	redC = 1.0-((thepayload - minPayload) / (maxPayload - minPayload));
+	greenC = 0.0;
+	blueC = 1.0-((thespeed - minspeed) / (maxSpeed - minSpeed));
+	colorchange = RGB Color( redC, greenC, blueC );
+	dt << Select Rows( i ) << Colors( colorchange );
+	dt << Clear Select;
+);
