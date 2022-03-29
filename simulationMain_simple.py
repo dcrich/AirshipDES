@@ -181,7 +181,7 @@ def run_simulation(AirshipDesigns,numberOfNewCities = 0):
     # outputDF.to_excel('SimulationTracker'+dtstr+'.xls',sheet_name='Discrete Event Tracker')
     # outputResults.to_excel('CityTracker'+dtstr+'.xls',sheet_name='FruitLoss')
 
-AirshipDesigns = np.array([[15.0, 84., 1.0, 0.5, 0.2, 0.3, 0.05, 3]])
+AirshipDesigns = np.array([[12,	29,	1,	1,	0.2,	0.3,	0.05,	3]])
 run_simulation(AirshipDesigns)
 
 

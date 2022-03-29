@@ -1,3 +1,32 @@
+﻿/*nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 531, 457 ),
+	Show Control Panel( 0 ),
+	Variables( X( :Payload ), Y( :Fuel Used ), Overlay( :FleetSize ) ),
+	Elements( Smoother( X, Y, Legend( 1 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				1,
+				Properties( 0, {Line Style( "Dotted" )}, Item ID( "1", 1 ) )
+			)}
+		)
+	)
+);*/
+
+Run_all_save_all = function({},
+	helium_vs_payload;
+	fuel_vs_payload;
+	fuel_vs_speed;
+	utilization_vs_payload; 
+	utilization_vs_speed;
+	utilization_vs_cost;
+	
+	income_vs_speed_thresh;
+	income_vs_speed_fleet;
+);
 
 
 helium_vs_payload = function({},
@@ -7,35 +36,51 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
+dt<<clear select;
 //dt << Select Dominant( {:Payload, :Helium Refill Cost}, {0, 0} ) << Markers(1);
 
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :Payload ), Y( :Helium Refill Cost ) ),
-		Elements( Smoother( X, Y, Legend( 2 ) ), Points( X, Y, Legend( 3 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Payload",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"Helium Refill Cost",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Helium Refill Cost ($R)" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Payload (tons)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
-		)
-	);
+nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 533, 400 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Left" ),
+	Variables( X( :Payload ), Y( :Fleet Helium Refill Cost ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"Payload",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( 0 ), Max( 31.16 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"Fleet Helium Refill Cost",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( -46.8277043052257 ), Max( 10500 ), Inc( 2000 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Smooth", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Airship Payload (tons)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Fleet Helium Refill Cost ($R/year)" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/heliumvspayload.png")
+
 );
 
 
@@ -51,33 +96,43 @@ dt << Exclude( 0 );
 dt << select Where(((CruiseSpeed == 40) & (LoadThreshold >= 0.4226 & LoadThreshold <= 0.6845)))
 << invert row selection << hide and exclude(1);
 dt << clear select;
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :Payload ), Y( :Fuel Used ) ),
-		Elements( Smoother( X, Y, Legend( 2 ) ), Points( X, Y, Legend( 3 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Fuel Used",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"Payload",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Total Fuel Consumption (tons)" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Payload (tons)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
-		)
-	);
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Left" ),
+	Variables( X( :Payload ), Y( :Fuel Used ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"Payload",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( 0 ), Max( 31.16 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch( {}, "Fuel Used", ScaleBox, {Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )} ),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Smooth", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Airship Payload (tons)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Total Fuel Consumption (tons)" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+		)		
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/fuelvspayload.png")
+
 );
 
 
@@ -92,35 +147,45 @@ dt << Select Excluded;
 dt << Exclude( 0 );
 //dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
 // Select the optimal design
-dt << select where(((Payload == 2) & (CruiseSpeed >= 20 & CruiseSpeed <= 87) & FleetSize == 3  & (LoadThreshold >= 0.3929 & LoadThreshold <= 0.6667)))<< invert row selection << hide and exclude(1);
+dt << select where(((Payload == 2) & (CruiseSpeed >= 20 & CruiseSpeed <= 87)   & (LoadThreshold >= 0.3929 & LoadThreshold <= 0.6667)))<< invert row selection << hide and exclude(1);
 dt << clear select;
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :CruiseSpeed ), Y( :Fuel Used ) ),
-		Elements(  Points( X, Y, Legend( 3 ) ),Smoother( X, Y, Legend( 2 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Fuel Used",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"CruiseSpeed",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Total Fuel Consumption (tons)" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Cruise Speed (knots)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
-		)
-	);
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Left" ),
+	Variables( X( :CruiseSpeed ), Y( :Fuel Used ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"CruiseSpeed",
+			ScaleBox,
+			{Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch( {}, "Fuel Used", ScaleBox, {Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )} ),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Smooth", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Total Fuel Consumption (tons)" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/fuelvsspeed.png")
+
 );
 
 
@@ -131,37 +196,53 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
-//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
 // Select the optimal design
-dt << select where(((CruiseSpeed == 77) & FleetSize == 2  & (LoadThreshold == 0.5)))<< invert row selection << hide and exclude(1);
+dt << select where(((CruiseSpeed == 77)  & (LoadThreshold == 0.5)))<< invert row selection << hide and exclude(1);
 dt << clear select;
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :Payload ), Y( :Real Utilization Fraction Fleet ) ),
-		Elements( Smoother( X, Y, Legend( 2 ), Lambda( 0.005 ) ), Points( X, Y, Legend( 3 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Real Utilization Fraction Fleet",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"Payload",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "Payload", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Payload (tons)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 2, Properties( 0, {Line Color( 0 ),Line Width( 5 ),Transparency( 0.75 )}, Item ID( "Smooth", 1 ) ) )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1], 2,[-1]} )} )
-		)
-	);
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Bottom Left" ),
+	Variables( X( :Payload ), Y( :Real Utilization Fraction Fleet ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 6 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"Payload",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( 0 ), Max( 31.16 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"Real Utilization Fraction Fleet",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( -0.000565247596779832 ), Max( 0.250924720122804 ), Inc( 0.05 ), Minor Ticks( 4 ),
+			Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				6,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Real Utilization Fraction Fleet", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Payload (tons)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Fleet Utilization" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/utilizationvspayload.png")
+
 );
 
 
@@ -174,40 +255,58 @@ dt << Select Excluded;
 dt << Exclude( 0 );
 dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
 // Select the optimal design
-dt << Select Dominant( {:Real Utilization Fraction Fleet, :CruiseSpeed}, {0, 0} );
-
+//dt << Select Dominant( {:Real Utilization Fraction Fleet, :CruiseSpeed}, {0, 0} );
 dt << clear select;
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :CruiseSpeed ), Y( :Real Utilization Fraction Fleet ) ),
-		Elements( Points( X, Y, Legend( 3 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Real Utilization Fraction Fleet",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"CruiseSpeed",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Cruise Speed (knots)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1]} )} )
-		)
-	);
+nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Bottom Left" ),
+	Variables( X( :CruiseSpeed ), Y( :Real Utilization Fraction Fleet ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"CruiseSpeed",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( 17.32 ), Max( 90 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"Real Utilization Fraction Fleet",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( -0.00188826751018119 ), Max( 0.359718784670628 ), Inc( 0.05 ), Minor Ticks( 4 ),
+			Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Fleet Utilization" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/utilizationvsspeed.png")
+
+
 );
 
 
+//need to open separate data table
 utilization_vs_cost = function({},
-dt = current data table();
+dt = open("utilization-cost Upd MAIN - 2022-03-25_01-31-50-PM.jmp");
 dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
@@ -215,35 +314,159 @@ dt << Select Excluded;
 dt << Exclude( 0 );
 dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
 // Select the optimal designs
-//dt << Select Dominant( {:Real Utilization Fraction Fleet, :AirshipCostPerTon}, {0, 0} );
-
+/*dt << select where(:FleetSize != 4 | Crop Loss <= 658) << exclude(1) << hide(1);
 dt << clear select;
-	Graph Builder(
-		Size( 650, 400 ),
-		Show Control Panel( 0 ),
-		Variables( X( :AirshipCostPerTon ), Y( :Real Utilization Fraction Fleet ) ),
-		Elements( Points( X, Y, Legend( 3 ) ) ),
-		SendToReport(
-			Dispatch(
-				{},
-				"Real Utilization Fraction Fleet",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch(
-				{},
-				"AirshipCostPerTon",
-				ScaleBox,
-				{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
-			),
-			Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-			Dispatch( {}, "400", ScaleBox, {Legend Model( 3, Properties( 0, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) ) )} ),
-			Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), set text( "Fleet Utilization" )} ),
-			Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), set text( "Airship Operational Cost ($R/ton)" )} ),
-			Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
-			Dispatch( {}, "400", LegendBox, {Legend Position( {3, [-1]} )} )
-		)
-	);
+dt << Select Dominant( {:Real Utilization Fraction Fleet, :AirshipCostPerTon}, {0, 0} );*/
+dt << clear select;
+
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 533, 400 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Right" ),
+	Variables( X( :AirshipCostPerTon ), Y( :Real Utilization Fraction Fleet ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"AirshipCostPerTon",
+			ScaleBox,
+			{Format( "Best", 12 ), Minor Ticks( 4 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"Real Utilization Fraction Fleet",
+			ScaleBox,
+			{Format( "Best", 12 ), Min( -0.00188826751018119 ), Max( 0.359718784670628 ), Inc( 0.05 ), Minor Ticks( 4 ),
+			Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Marker Size( 4 ), Transparency( 0.8 )}, Item ID( "CruiseSpeed", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Airship Operational Cost ($R/ton)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Fleet Utilization" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 4 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/utilizationvscost.png");
+	close(dt);
 );
 
 
+
+
+income_vs_speed_fleet = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 );
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << select where((Payload == 5) & (LoadThreshold == 0.5 )) << invert row selection << hide and exclude(1);
+dt << clear select;
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Bottom Left" ),
+	Variables( X( :CruiseSpeed ), Y( :Income Percent Delta ), Overlay( :FleetSize ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"CruiseSpeed",
+			ScaleBox,
+			{Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch( {}, "Income Percent Delta", ScaleBox, {Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )} ),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 ), Fill Color( -13638795 )}, Item ID( "1", 1 ) ),
+				Properties( 1, {Line Color( -9343674 ), Line Style( "DashDot" ), Line Width( 4 ), Fill Color( -15708118 )}, Item ID( "2", 1 ) ),
+				Properties( 2, {Line Color( -13609088 ), Line Style( "Dashed" ), Line Width( 4 ), Fill Color( -11787905 )}, Item ID( "3", 1 ) ),
+				Properties( 3, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 ), Fill Color( -5090342 )}, Item ID( "4", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Smooth", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Impact to Income (%∆)" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/incomeFleetSurfaces.png")
+
+);
+
+
+
+
+income_vs_speed_thresh = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 );
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+//dt << select where(Crop Loss <= 658) << exclude(1) << hide(1);
+// Select the optimal design
+dt << select where((Payload >= 6 & Payload <= 7) & (FleetSize == 2 )) << invert row selection << hide and exclude(1);
+dt << clear select;
+	nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
+	Size( 427, 533 ),
+	Show Control Panel( 0 ),
+	Legend Position( "Inside Bottom Left" ),
+	Variables( X( :CruiseSpeed ), Y( :Income Percent Delta ), Overlay( :LoadThreshold ) ),
+	Elements( Line( X, Y, Legend( 4 ) ) ),
+	SendToReport(
+		Dispatch(
+			{},
+			"CruiseSpeed",
+			ScaleBox,
+			{Format( "Best", 12 ), Label Row( Set Font Size( 18 ) )}
+		),
+		Dispatch( {}, "Income Percent Delta", ScaleBox, {Format( "Best", 12 ), Min( 73.99 ), Max( 80.01 ), Inc( 1 ), Minor Ticks( 1 ), Label Row( Set Font Size( 18 ) )} ),
+		Dispatch(
+			{},
+			"400",
+			ScaleBox,
+			{Legend Model(
+				4,
+				Properties( 0, {Line Color( -2766765 ), Line Width( 4 )}, Item ID( "0", 1 ) ),
+				Properties( 1, {Line Color( -7830966 ), Line Style( "DashDotDot" ), Line Width( 4 )}, Item ID( "0.25", 1 ) ),
+				Properties( 2, {Line Color( -12632256 ), Line Style( "DashDot" ), Line Width( 4 )}, Item ID( "0.5", 1 ) ),
+				Properties( 3, {Line Color( -14130272 ), Line Style( "Dashed" ), Line Width( 4 )}, Item ID( "0.75", 1 ) ),
+				Properties( 4, {Line Color( -15628032 ), Line Style( "Dotted" ), Line Width( 4 )}, Item ID( "1", 1 ) ),
+				Properties( -1, {Line Color( 0 ), Line Width( 5 ), Transparency( 0.75 )}, Item ID( "Smooth", 1 ) )
+			)}
+		),
+		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Impact to Income (%∆)" )} ),
+		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+		Dispatch( {}, "400", LegendBox, {Set Title( "Load Threshold" ), font( "Helvetica Neue", 16, "Bold" )} )
+	)
+	))));
+	ob << Image Export Display( "None" );
+	ob << save picture("/Users/danada/Coding/AirshipDES/Figures/incomeThreshSurfaces.png")
+
+);

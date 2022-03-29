@@ -1,50 +1,14 @@
 
 all_contours = function({},
-	income_contour;
 	boat_contour;
 	crop_contour;
 	forest_contour;
+	income_contour;
 	time_contour;
 	
 );
 
-income_contour = function({},
-dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
-dt << Select Hidden;
-dt << Hide( 0 );
-dt << Select Excluded;
-dt << Exclude( 0 );
-Contour Plot(
-	Size( 650, 400 ),
-	X( :Payload, :CruiseSpeed ),
-	Y( :Income ),
-	Show Data Points( 1 ),
-	Fill Areas( 1 ),
-	Label Contours( 0 ),
-	Transform( "Range Normalized" ),
-	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
-	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Properties(0,{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Label Format( "Engineering SI", 5 )} )},Item ID( "Income", 1 )))}),
-				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 24 ), Set Text( "Cruise Speed (knots)" )} ),
-				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 24 ), Set Text( "Payload (tons)" )} ),
-				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
-Income" ),font( "Helvetica Neue", 20, "Plain" )} )
-	)
-);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0) |
-				   (Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0) |
-				   (Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0)) << Markers(16);
-dt << select Where((Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0)) << Markers(15);
-dt << select Where((Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
-dt<<clear select;
-);
+
 
 boat_contour = function({},
 dt = current data table();
@@ -53,7 +17,7 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
-Contour Plot(
+nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Boat Trip Loss ),
 	Show Data Points( 1 ),
@@ -61,27 +25,32 @@ Contour Plot(
 	Label Contours( 0 ),
 	Transform( "Range Normalized" ),
 	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
-	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Properties(0,{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Label Format( "Best", 5 )} )},Item ID( "Boat Trip Loss", 1 )))}),
-				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 24 ), Set Text( "Cruise Speed (knots)" )} ),
-				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 24 ), Set Text( "Payload (tons)" )} ),
-				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
-Boat Jobs" ),font( "Helvetica Neue", 20, "Plain" )} )
+	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Type( 0, 262144, Item ID( "Boat Trip Loss", 1 ) ),Properties(0,{gradient( {Color Theme( "Universal Bad to Good" ), Min Lightness( 0.3313 ), N Labels( 20 ),show labels(0), Label Format( "Best", 5 )} )},Item ID( "Boat Trip Loss", 1 )))}),
+	Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
+	Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
+	Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
+	Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
+	Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+	Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to
+Boat Job Loss " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
-);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0) |
-				   (Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0) |
-				   (Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1))
+))));
+
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
    << invert row selection << hide(1);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0)) << Markers(16);
-dt << select Where((Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0)) << Markers(15);
-dt << select Where((Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
+dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
+dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
+ob << Image Export Display( "None" );
+ob << save picture("/Users/danada/Coding/AirshipDES/Figures/boatcontour.png");
 );
+
+
 
 crop_contour = function({},
 dt = current data table();
@@ -90,7 +59,7 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
-Contour Plot(
+nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Crop Loss ),
 	Show Data Points( 1 ),
@@ -98,27 +67,31 @@ Contour Plot(
 	Label Contours( 0 ),
 	Transform( "Range Normalized" ),
 	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
-	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Properties(0,{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Label Format( "Best", 5 )} )},Item ID( "Crop Loss", 1 )))}),
+	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Type( 0, 262144, Item ID( "Crop Loss", 1 ) ),Properties(0,{gradient( {Color Theme( "Universal Bad to Good" ), Min Lightness( 0.3313 ), N Labels( 20 ),show labels(0), Label Format( "Best", 5 )} )},Item ID( "Crop Loss", 1 )))}),
 				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 24 ), Set Text( "Cruise Speed (knots)" )} ),
+				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 24 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
-Crops" ),font( "Helvetica Neue", 20, "Plain" )} )
+Crop Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
-);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0) |
-				   (Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0) |
-				   (Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1))
+))));
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
    << invert row selection << hide(1);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0)) << Markers(16);
-dt << select Where((Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0)) << Markers(15);
-dt << select Where((Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
+dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
+dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
+ob << Image Export Display( "None" );
+ob << save picture("/Users/danada/Coding/AirshipDES/Figures/cropcontour.png");
 );
+
+
 
 forest_contour = function({},
 dt = current data table();
@@ -127,35 +100,81 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
-Contour Plot(
+nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
-	Y( :Forest Loss ),
+	Y( :Negative Forest Loss ),
 	Show Data Points( 1 ),
 	Fill Areas( 1 ),
 	Label Contours( 0 ),
 	Transform( "Range Normalized" ),
 	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
-	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Properties(0,{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Label Format( "Best", 5 )} )},Item ID( "Forest Loss", 1 )))}),
+	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Type( 0, 262144, Item ID( "Negative Forest Loss", 1 ) ),Properties(0,{gradient( {Color Theme( "Universal Bad to Good" ), Min Lightness( 0.3313 ), N Labels( 20 ),show labels(0), Label Format( "Best", 5 )} )},Item ID( "Negative Forest Loss", 1 )))}),
 				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 24 ), Set Text( "Cruise Speed (knots)" )} ),
+				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 24 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
-Forest Loss" ),font( "Helvetica Neue", 20, "Plain" )} )
+Forest Loss     " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
-);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0) |
-				   (Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0) |
-				   (Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1))
+))));
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
    << invert row selection << hide(1);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0)) << Markers(16);
-dt << select Where((Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0)) << Markers(15);
-dt << select Where((Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
+dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
+dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
+ob << Image Export Display( "None" );
+ob << save picture("/Users/danada/Coding/AirshipDES/Figures/forestcontour.png");
 );
+
+
+
+income_contour = function({},
+dt = current data table();
+dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+dt << Select Hidden;
+dt << Hide( 0 );
+dt << Select Excluded;
+dt << Exclude( 0 );
+nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
+	Size( 650, 400 ),
+	X( :Payload, :CruiseSpeed ),
+	Y( :Income ),
+	Show Data Points( 1 ),
+	Fill Areas( 1 ),
+	Label Contours( 0 ),
+	Transform( "Range Normalized" ),
+	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
+	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Type( 0, 262144, Item ID( "Income", 1 ) ),Properties(0,{gradient( {Color Theme( "Universal Bad to Good" ), Min Lightness( 0.3313 ), N Labels( 20 ),show labels(0), Label Format( "Best", 5 )} )},Item ID( "Income", 1 )))}),
+				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
+				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
+				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
+				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
+Income            " ),font( "Helvetica Neue", 24, "Plain" )} )
+	)
+))));
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
+   << invert row selection << hide(1);
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
+dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
+dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt<<clear select;
+ob << Image Export Display( "None" );
+ob << save picture("/Users/danada/Coding/AirshipDES/Figures/incomecontour.png");
+);
+
+
 
 time_contour = function({},
 dt = current data table();
@@ -164,7 +183,7 @@ dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
 dt << Exclude( 0 );
-Contour Plot(
+nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Time Savings ),
 	Show Data Points( 1 ),
@@ -172,25 +191,39 @@ Contour Plot(
 	Label Contours( 0 ),
 	Transform( "Range Normalized" ),
 	//Specify Contours( Min( 444764.542936288 ), Max( 394736.842105263 ), N( 200 ) ),
-	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Properties(0,{gradient( {Color Theme( "White to Blue" ), Min Lightness( 0.1043 ), Max Lightness( 0.9264 ), N Labels( 20 ), Label Format( "Best", 5 )} )},Item ID( "Time Savings", 1 )))}),
+	SendToReport(Dispatch({},"1111",ScaleBox,{Legend Model(1,Type( 0, 262144, Item ID( "Time Savings", 1 ) ),Properties(0,{gradient( {Color Theme( "Universal Bad to Good" ), Min Lightness( 0.3313 ),N Labels( 20 ),show labels(0), Label Format( "Best", 5 )} )},Item ID( "Time Savings", 1 )))}),
 				Dispatch( {}, "1", ScaleBox, {Min( 1 ), Max( 30 ), Inc( 5 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
-				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 24 ), Set Text( "Cruise Speed (knots)" )} ),
+				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 24 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
-Time" ),font( "Helvetica Neue", 20, "Plain" )} )
+Time Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
-);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0) |
-				   (Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0) |
-				   (Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1))
+))));
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
+				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
    << invert row selection << hide(1);
-dt << select Where((Payload == 2 & CruiseSpeed == 29 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 3 & CruiseSpeed == 21 & FleetSize == 3 & LoadThreshold == 0)) << Markers(16);
-dt << select Where((Payload == 6 & CruiseSpeed == 39 & FleetSize == 2 & LoadThreshold == 0)) << Markers(15);
-dt << select Where((Payload == 11 & CruiseSpeed == 26 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
+dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
+dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
+ob << Image Export Display( "None" );
+ob << save picture("/Users/danada/Coding/AirshipDES/Figures/timecontour.png");
 );
 
+
+/*
+MAXB = Col Maximum(:Boat Trip Loss);
+MINB = col minimum(:Boat Trip Loss);
+MAXC = Col Maximum(:Crop Loss);
+MINC = col minimum(:Crop Loss);
+MAXF = Col Maximum(:Forest Loss);
+MINF = col minimum(:Forest Loss);
+MAXI = Col Maximum(:Income);
+MINI = col minimum(:Income);
+MAXT = Col Maximum(:Time Savings);
+MINT = col minimum(:Time Savings);*/

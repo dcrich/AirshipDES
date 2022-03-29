@@ -2,14 +2,14 @@
 dt = Current Data Table();
 minPayload = Col Minimum( :Payload );
 maxPayload = Col Maximum( :Payload );
-minSpeed = Col Minimum( :FleetSize );
-maxSpeed = Col Maximum( :FleetSize );
+minSpeed = Col Minimum( :CruiseSpeed );
+maxSpeed = Col Maximum( :CruiseSpeed );
 lengthDT = 40800;
 dt << Clear Select;
 //loop through data
 For( i = 1, i <= lengthDT, i++,
 	thepayload = dt:Payload[i];
-	thespeed = dt:FleetSize[i];
+	thespeed = dt:CruiseSpeed[i];
 
 	redC = 1.0-((thepayload - minPayload) / (maxPayload - minPayload));
 	greenC = 0.0;

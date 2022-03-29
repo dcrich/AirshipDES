@@ -73,7 +73,7 @@ def run_simulation(AirshipDesigns,numberOfNewCities = 0):
         LoadingResources = 1
         # FarmerCount = [77., 166., 47., 97.]
         boatCount = np.array([5., 7., 7., 12.]) # [5.+5., 7.+28., 7.+4., 12.+7.] # with manaus boats divided between
-        CityToHubBoatDistance =  np.array([8.8, 19.3, 39.1, 48.6]) #nautical miles
+        CityToHubBoatDistance =  np.array([20.,38.,47.,60.]) #nautical miles
         if numberOfNewCities > 0:
             cityCoordinates,newcitydistances = generate_new_cities(numberOfNewCities, hubCoordinates, cityCoordinates)
             boatM = np.mean(boatCount)
@@ -264,11 +264,11 @@ def run_simulation(AirshipDesigns,numberOfNewCities = 0):
 
 #SIMULATIONS
 #Threshold cutoff is between 0.057 and 0.07 for profitability, any other changes may just be affecting the schedule
-# Main
-AirshipDesigns = generate_designs(
-    payloadrange=[1.,31.], speedrange=[20.,88.], fleetrange=[1.,5.], 
-    threshrange=[0.25,0.75], loadraterange=[0.1,0.5], setsize = [1,1,1], setlength=[3,1])
-run_simulation(AirshipDesigns)
+# # Main
+# AirshipDesigns = generate_designs(
+#     payloadrange=[1.,31.], speedrange=[20.,88.], fleetrange=[1.,5.], 
+#     threshrange=[0.0,1.0], loadraterange=[0.2,0.5], setsize = [1,1,1], setlength=[3,1])
+# run_simulation(AirshipDesigns)
 
 # # Threshold Sensitivity - sparse
 # AirshipDesigns = generate_designs(
@@ -282,11 +282,11 @@ run_simulation(AirshipDesigns)
 #     threshrange=[0.0,1], loadraterange=[0.1,0.5], setsize = [10,10,1], setlength=[4,1])
 # run_simulation(AirshipDesigns)
 
-# # Load Rate Sensitivity - sparse
-# AirshipDesigns = generate_designs(
-#     payloadrange=[1,31], speedrange=[20,88], fleetrange=[3,5], 
-#     threshrange=[1.0,1.0], loadraterange=[0.1,0.5], setsize = [1,1,1], setlength=[1,5])
-# run_simulation(AirshipDesigns)
+# Load Rate Sensitivity -
+AirshipDesigns = generate_designs(
+    payloadrange=[1,31], speedrange=[20,88], fleetrange=[1,5], 
+    threshrange=[1.0,1.0], loadraterange=[0.3,0.5], setsize = [1,1,1], setlength=[1,3])
+run_simulation(AirshipDesigns)
 
 # # Load Rate Sensitivity Test - Very sparse
 # AirshipDesigns = generate_designs(
@@ -314,8 +314,8 @@ run_simulation(AirshipDesigns)
 ## TESTS
 # # Main
 # AirshipDesigns = generate_designs(
-#     payloadrange=[2.,31.], speedrange=[20.,88.], fleetrange=[1.,4.], 
-#     threshrange=[1.0,1.0], loadraterange=[0.2,0.5], setsize = [1,2,1], setlength=[1,1])
+#     payloadrange=[1.,31.], speedrange=[20.,88.], fleetrange=[1.,3.], 
+#     threshrange=[0.5,1.0], loadraterange=[0.2,0.5], setsize = [5,10,1], setlength=[1,1])
 # run_simulation(AirshipDesigns)
 
 # AirshipDesigns = np.array([[16.0, 84., 1.0, 0.5, 0.2, 0.3, 0.05, 3]])

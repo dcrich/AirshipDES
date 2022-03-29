@@ -41,7 +41,7 @@ def distance_between_coordinates(latlon1, latlon2):
         lat2 = latlon2[0] * np.pi / 180
         lon2 = latlon2[1] * np.pi / 180
         # distance in nm
-        distanceBetweenCoord = 6371 * 2 * np.arcsin( np.sqrt( (np.sin((lat1-lat2)/2))**2 + np.cos(lat1)*np.cos(lat2)*(np.sin((lon1-lon2)/2))**2 ))
+        distanceBetweenCoord = 0.539957 * 6371 * 2 * np.arcsin( np.sqrt( (np.sin((lat1-lat2)/2))**2 + np.cos(lat1)*np.cos(lat2)*(np.sin((lon1-lon2)/2))**2 ))
         return distanceBetweenCoord
 
 
