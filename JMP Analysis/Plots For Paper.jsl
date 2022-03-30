@@ -306,7 +306,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(gb = Graph Builder(
 
 //need to open separate data table
 utilization_vs_cost = function({},
-dt = open("utilization-cost Upd MAIN - 2022-03-25_01-31-50-PM.jmp");
+//dt = open("utilization-cost Upd MAIN - 2022-03-25_01-31-50-PM.jmp");
 dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );

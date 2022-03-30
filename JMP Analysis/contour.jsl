@@ -12,11 +12,11 @@ all_contours = function({},
 
 boat_contour = function({},
 dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+/*dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
-dt << Exclude( 0 );
+dt << Exclude( 0 );*/
 nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Boat Trip Loss ),
@@ -36,15 +36,15 @@ Boat Job Loss " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
 ))));
 
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+/*dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1) |
 				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
-				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+				   (Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1))
+   << invert row selection << hide(1);*/
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << hide(0) << Markers(12);
+dt << select Where((Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1)) << Markers(16);
 dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
-dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
 ob << Image Export Display( "None" );
 ob << save picture("/Users/danada/Coding/AirshipDES/Figures/boatcontour.png");
@@ -54,11 +54,11 @@ ob << save picture("/Users/danada/Coding/AirshipDES/Figures/boatcontour.png");
 
 crop_contour = function({},
 dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+/*dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
-dt << Exclude( 0 );
+dt << Exclude( 0 );*/
 nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Crop Loss ),
@@ -77,15 +77,15 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 Crop Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
 ))));
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+/*dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1) |
 				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
-				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+				   (Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1))
+   << invert row selection << hide(1);*/
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << hide(0)<< Markers(12);
+dt << select Where((Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1)) << Markers(16);
 dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
-dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
 ob << Image Export Display( "None" );
 ob << save picture("/Users/danada/Coding/AirshipDES/Figures/cropcontour.png");
@@ -95,11 +95,11 @@ ob << save picture("/Users/danada/Coding/AirshipDES/Figures/cropcontour.png");
 
 forest_contour = function({},
 dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+/*dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
-dt << Exclude( 0 );
+dt << Exclude( 0 );*/
 nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Negative Forest Loss ),
@@ -118,15 +118,15 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 Forest Loss     " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
 ))));
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+/*dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1) |
 				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
-				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+				   (Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1))
+   << invert row selection << hide(1);*/
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << hide(0)<< Markers(12);
+dt << select Where((Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1)) << Markers(16);
 dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
-dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
 ob << Image Export Display( "None" );
 ob << save picture("/Users/danada/Coding/AirshipDES/Figures/forestcontour.png");
@@ -136,11 +136,11 @@ ob << save picture("/Users/danada/Coding/AirshipDES/Figures/forestcontour.png");
 
 income_contour = function({},
 dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+/*dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
-dt << Exclude( 0 );
+dt << Exclude( 0 );*/
 nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	Size( 650, 400 ),
 	X( :Payload, :CruiseSpeed ),
@@ -160,15 +160,15 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 Income            " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
 ))));
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+/*dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1) |
 				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
-				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+				   (Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1))
+   << invert row selection << hide(1);*/
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << hide(0)<< Markers(12);
+dt << select Where((Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1)) << Markers(16);
 dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
-dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
 ob << Image Export Display( "None" );
 ob << save picture("/Users/danada/Coding/AirshipDES/Figures/incomecontour.png");
@@ -178,11 +178,11 @@ ob << save picture("/Users/danada/Coding/AirshipDES/Figures/incomecontour.png");
 
 time_contour = function({},
 dt = current data table();
-dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
+/*dt << select where( :FleetSize >= 1 ) << Markers("Filled Circle");
 dt << Select Hidden;
 dt << Hide( 0 );
 dt << Select Excluded;
-dt << Exclude( 0 );
+dt << Exclude( 0 );*/
 nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	X( :Payload, :CruiseSpeed ),
 	Y( :Time Savings ),
@@ -201,15 +201,15 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 Time Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
 ))));
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
-				   (Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1) |
+/*dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1) | 
+				   (Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1) |
 				   (Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1) |
-				   (Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1))
-   << invert row selection << hide(1);
-dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << Markers(12);
-dt << select Where((Payload == 2 & CruiseSpeed == 20 & FleetSize == 3 & LoadThreshold == 1)) << Markers(16);
+				   (Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1))
+   << invert row selection << hide(1);*/
+dt << select Where((Payload == 1 & CruiseSpeed == 68 & FleetSize == 3 & LoadThreshold == 1)) << hide(0)<< Markers(12);
+dt << select Where((Payload == 16 & CruiseSpeed == 37 & FleetSize == 1 & LoadThreshold == 1)) << Markers(16);
 dt << select Where((Payload == 9 & CruiseSpeed == 59 & FleetSize == 1 & LoadThreshold == 1)) << Markers(15);
-dt << select Where((Payload == 9 & CruiseSpeed == 25 & FleetSize == 2 & LoadThreshold == 1)) << Markers(20);
+dt << select Where((Payload == 11 & CruiseSpeed == 51 & FleetSize == 1 & LoadThreshold == 1)) << Markers(20);
 dt<<clear select;
 ob << Image Export Display( "None" );
 ob << save picture("/Users/danada/Coding/AirshipDES/Figures/timecontour.png");

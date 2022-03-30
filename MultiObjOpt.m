@@ -38,11 +38,11 @@ title('f val')
 % nlc([5,59,2])
 
 function f = airship_surrogate_model(x)
-wB = -0.0; % minimize Impact to Boat Jobs (B/C it's already negative)
-wC = -0.0; % maximize Impact to Crops
-wF =  0.0; % minimize Impact to Forest
-wI = -0.5; % maximize Impact to Farmer Income
-wT = -0.5; % maximize Impact to Farmer Time
+wB = -0.05; % minimize Impact to Boat Jobs (B/C it's already negative)
+wC = -0.3; % maximize Impact to Crops
+wF =  0.05; % minimize Impact to Forest
+wI = -0.3; % maximize Impact to Farmer Income
+wT = -0.3; % maximize Impact to Farmer Time
 PAYLOAD = round(x(1));
 CRUISESPEED = round(x(2));
 FLEETSIZE = round(x(3));
