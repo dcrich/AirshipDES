@@ -234,7 +234,7 @@ dt << clear select;
 			)}
 		),
 		Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
-		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Payload (tons)" )} ),
+		Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Airship Payload (tons)" )} ),
 		Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Fleet Utilization" )} ),
 		Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 7 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
 		Dispatch( {}, "400", LegendBox, {Set Title( "Fleet Size" ), font( "Helvetica Neue", 16, "Bold" )} )

@@ -30,7 +30,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 	Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 	Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 	Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-	Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+	Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Airship Payload (tons)" )} ),
 	Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to
 Boat Job Loss " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
@@ -72,7 +72,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Airship Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
 Crop Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
@@ -113,7 +113,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Airship Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
 Forest Loss     " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
@@ -155,7 +155,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Airship Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
 Income            " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
@@ -196,7 +196,7 @@ nw = newwindow("title",ob=outlinebox("title",vlistbox(Contour Plot(
 				Dispatch( {}, "2", ScaleBox, {Min( 20 ), Max( 87 ), Inc( 10 ), Minor Ticks( 4 ), Label Row( Set Font Size( 22 ) )} ),
 				Dispatch( {}, "CruiseSpeed", TextEditBox, {Set Font Size( 28 ), Set Text( "Cruise Speed (knots)" )} ),
 				Dispatch( {}, "Contour Plot Graph", FrameBox, {Frame Size( 759, 632 ), Marker Size( 10 ), Marker Drawing Mode( "Outlined" )} ),
-				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Payload (tons)" )} ),
+				Dispatch( {}, "Payload", TextEditBox, {Set Font Size( 28 ), Set Text( "Airship Payload (tons)" )} ),
 				Dispatch( {}, "1111", LegendBox, { Set Title( "Impact to 
 Time Savings  " ),font( "Helvetica Neue", 24, "Plain" )} )
 	)
