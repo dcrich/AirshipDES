@@ -1,0 +1,75 @@
+﻿/*
+Graph Builder(
+	Size( 727, 423 ),
+	Show Control Panel( 0 ),
+	Variables( X( :CruiseSpeed ), Y( :Income ) ),
+	Elements( Box Plot( X, Y, Legend( 7 ), Jitter( "None" ), Outliers( 0 ), Box Type( "Quantile" ) ) ),
+	SendToReport( Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 6 ), Marker Drawing Mode( "Normal" )} ) )
+);*/
+
+
+income_vs_speed_unc = Function( {},
+	dt = Current Data Table();
+	nw = New Window( "title",
+		ob = Outline Box( "title",
+			V List Box(
+				gb = Graph Builder(
+					Size( 533, 400 ),
+					Show Control Panel( 0 ),
+					Variables( X( :CruiseSpeed ), Y( :Income ) ),
+					Elements( Box Plot( X, Y, Legend( 7 ), Jitter( "None" ), Outliers( 0 ), Box Type( "Quantile" ), Fences( 0 ) ) ),
+					SendToReport(
+						Dispatch( {}, "Income", ScaleBox, {Format( "Engineering SI", 12 ), Label Row( Set Font Size( 18 ) )} ),
+						Dispatch( {}, "CruiseSpeed", ScaleBox, {Label Row( Set Font Size( 18 ) )} ),
+						Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 6 ), Marker Drawing Mode( "Normal" )} ),
+						Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+						Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+						Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Impact to Income (∆ $R)" )} ),
+						Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 20 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+						Dispatch( {}, "400", LegendBox, {Legend Position( {7, [-1]} )} )
+					)
+				)
+			)
+		)
+	);
+	ob << Image Export Display( "None" );
+	ob << save picture( "/Users/danada/Coding/AirshipDES/Figures/incomeuncertainty.png" );
+	//Close( dt );
+);
+
+
+
+
+
+
+
+crops_vs_speed_unc = Function( {},
+	dt = Current Data Table();
+	nw = New Window( "title",
+		ob = Outline Box( "title",
+			V List Box(
+				Graph Builder(
+					Size( 537, 400 ),
+					Show Control Panel( 0 ),
+					Variables( X( :CruiseSpeed ), Y( :Crop Loss ) ),
+					Elements( Box Plot( X, Y, Legend( 7 ), Jitter( "None" ), Outliers( 0 ), Box Type( "Quantile" ), Fences( 0 ) ) ),
+					SendToReport(
+						Dispatch( {}, "CruiseSpeed", ScaleBox, {Label Row( Set Font Size( 18 ) )} ),
+						Dispatch( {}, "Crop Loss", ScaleBox, {Label Row( Set Font Size( 18 ) )} ),
+						Dispatch( {}, "graph title", TextEditBox, {Set Text( "" )} ),
+						Dispatch( {}, "X title", TextEditBox, {Set Font Size( 18 ), Set Text( "Cruise Speed (knots)" )} ),
+						Dispatch( {}, "Y title", TextEditBox, {Set Font Size( 18 ), Set Text( "Impact to Crop Savings (∆ tons)" )} ),
+						Dispatch( {}, "Graph Builder", FrameBox, {Marker Size( 20 ), Marker Drawing Mode( "Normal" ), Transparency( 0.8 )} ),
+						Dispatch( {}, "400", LegendBox, {Legend Position( {7, [-1]} )} )
+					)
+				)
+			)
+		)
+	);
+	ob << Image Export Display( "None" );
+	ob << save picture( "/Users/danada/Coding/AirshipDES/Figures/cropsuncertainty.png" );
+	//Close( dt );
+);
+
+
+
