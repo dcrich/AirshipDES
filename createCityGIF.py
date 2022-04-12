@@ -87,6 +87,32 @@ def create_new_data_array(data1):
     newdata1 = np.delete(newdata1,deleterows,0)
     return newdata1
 
+def select_edge_color(a,airship,alast):
+    if a == -6:
+        color = [0.6,0.6,0.6]
+    elif a == -1:
+        if alast == -6:
+            color = [1.0,0.86,0.2]
+        else:
+            color = [108./255., 89./255., 191./255.]
+    elif a == 0:
+        color = [0.0,0.4,0.0]
+    elif a == 1:
+        color = [0.0,0.4,0.0]
+    elif a == 2:
+        color = [0.0,0.4,0.0]
+    elif a == 3:
+        color = [0.0,0.4,0.0]
+    elif a == -2:
+        color = [0.7,0.0,0.0]
+    elif a == 99:
+        if airship == 1:
+            color = [0.11,0.45,0.67]
+        if airship == 2:
+            color = [1.0,0.57,0.0]
+    else:
+        raise Exception("Missed a case")
+    return color
 
 
 def plot_simulation(newdata1,newdata2):
@@ -104,25 +130,40 @@ def plot_simulation(newdata1,newdata2):
     area = rx * ry * np.pi
     theta = np.arange(0, 2 * np.pi + 0.01, 0.1)
     verts = np.column_stack([rx / area * np.cos(theta), ry / area * np.sin(theta)])
-    indstart1 = np.argwhere(newdata1[:,0]==6895)
-    indend1 = np.argwhere(newdata1[:,0]==6991)
-    indstart2 = np.argwhere(newdata2[:,0]==6895)
-    indend2 = np.argwhere(newdata2[:,0]==6991)
-    indstart = np.min(np.array([indstart1,indstart2]))
-    indend = np.max(np.array([indend1,indend2]))
-    for i in np.arange(indstart,indend,1):
+
+    # font = {'family': 'sanserif',
+    #     'color':  'black',
+    #     'weight': 'normal',
+    #     'size': 8}
+
+    # indstart1 = np.argwhere(newdata1[:,0]==6895)
+    # indend1 = np.argwhere(newdata1[:,0]==6991)
+    # indstart2 = np.argwhere(newdata2[:,0]==6895)
+    # indend2 = np.argwhere(newdata2[:,0]==6991)
+    # indstart = np.min(np.array([indstart1,indstart2]))
+    # indend = np.max(np.array([indend1,indend2]))    
+    indstart = np.max(np.argwhere(np.isclose(newdata1[:,0],3230.8543403)))+1550
+    indend = np.min(np.argwhere(np.isclose(newdata1[:,0],3254.9307068)))
+    lastact1 = -60
+    lastact2 = -60
+    for i in np.arange(indstart+43,indend,1):
+    # for i in np.arange(indend-400,indend-300,1):
         a1Lat = newdata1[i,2]
         a1Lon = newdata1[i,3]
         a1Act = newdata1[i,1]
-
         a2Lat = newdata2[i,2]
         a2Lon = newdata2[i,3]
         a2Act = newdata2[i,1]
 
+        edge1 = select_edge_color(a1Act,1,lastact1)
+        edge2 = select_edge_color(a2Act,2,lastact2)
+        lastact1 = a1Act
+        lastact2 = a2Act
+
         plt.clf() # clear the frame.
         plt.gca().set_aspect(1.3, adjustable='box')
         plt.xlim((-60.6,-59.6))
-        plt.ylim((-3.5,-3.1))
+        plt.ylim((-3.5,-3.05))
         plt.scatter(-60.025, -3.117, s=75,c='k',marker="o") #plot manaus
         plt.text(-60.025, -3.117,'  Manaus', fontsize=12)
         plt.scatter(-59.826, -3.196, s=75,c='k',marker="o") #plot c
@@ -133,20 +174,14 @@ def plot_simulation(newdata1,newdata2):
         plt.text(-60.344, -3.387,'  Jutai', fontsize=12)
         plt.scatter(-60.462, -3.441, s=75,c='k',marker="o") #plot m
         plt.text(-60.462, -3.441,'  Manaquiri', fontsize=12)
-        plt.scatter(a1Lon,a1Lat, s=1000,c='b',alpha = 0.5,marker=verts)
-        plt.scatter(a2Lon,a2Lat, s=1000,c='r',alpha = 0.5,marker=verts)
-        plt.savefig("gif/frame_" + str(i).zfill(7) + ".png",dpi=300, bbox_inches = 'tight',pad_inches = 0.05)
-        # plt.gcf().canvas.draw() # interactive plotting is weird, but force it to execute here
-        # time.sleep(0.01)
-        # imgData = np.frombuffer(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8) # Extra image data from the plot
-        # w, h = plt.gcf().canvas.get_width_height() # Determine the dimensions
-        # mod = np.sqrt(imgData.shape[0]/(3*w*h)) # multi-sampling of pixels on high-res displays does weird things, account for it.
-        # im = imgData.reshape((int(h*mod), int(w*mod), -1)) # Create our image array in the right shape
-        # Image.fromarray(im).save("gif/frame_" + str(i).zfill(5) + ".png",dpi=300) # And pass it to PIL to save it.
+        plt.scatter(a1Lon-0.01,a1Lat, s=1000,color=[0.11,0.45,0.67],alpha = 0.5,marker=verts)
+        plt.scatter(a1Lon-0.01,a1Lat, s=1000,facecolors='none', edgecolors=edge1, alpha = 0.9,marker=verts,linewidths=3)
+        plt.scatter(a2Lon+0.01,a2Lat, s=1000,color=[1.0,0.57,0.0],alpha = 0.5,marker=verts)
+        plt.scatter(a2Lon+0.01,a2Lat, s=1000,facecolors='none', edgecolors=edge2, alpha = 0.9,marker=verts,linewidths=3)
+        plt.savefig("gif/frame_" + str(i).zfill(7) + ".png",dpi=500, bbox_inches = 'tight',pad_inches = 0.05)#, transparent=True)
         plt.gcf().canvas.flush_events() # Make sure the canvas is ready to go for the next step
 
-    # print("starting gif making")
-    # from PIL import Image
+
     
     # # Create the frames
     frames = [] # This holds each image
@@ -161,9 +196,25 @@ def plot_simulation(newdata1,newdata2):
     frames[0].save('gif/output.gif', format='GIF',
                     append_images=frames[1:],
                     save_all=True,
-                    duration=len(imgs)*0.005, loop=1)
+                    duration=len(imgs)*0.005, loop=1,)
     # print("saved")
 
+def plot_map():
+    import plotly.graph_objects as go
+    
+    fig = go.Figure(go.Scattermapbox(
+            lat=[-3.117,-3.196,-3.276,-3.387,-3.441],
+            lon=[-60.025,-59.826,-60.190,-60.344,-60.462],
+            mode='markers',
+            marker=go.scattermapbox.Marker(size=9 ),
+            text = ["Manaus", "Careiro", "Iranduba", "Jutai", "Manaquiri"],
+            textposition = "top right"))
+
+    fig.update_layout( mapbox_style = "stamen-terrain",
+        mapbox=dict( bearing=0, center=dict( lat=-3.3, lon=-60.1 ),  
+        pitch=0, zoom=10 ),)
+
+    fig.show()
 
 # loop through data, create new matrix that interpolates where each airship is at a time step
 data = pd.read_csv('8.0-20.0-2.0_outputTimeSeries2022-04-11_09-35-16-AM.csv')
@@ -178,5 +229,5 @@ data2 = dataArray[np.argwhere(dataArray[:,2]==1),:].reshape(-1,6)
 newdata1 = create_new_data_array(data1)
 newdata2 = create_new_data_array(data2)
 
-
+# plot_map()
 plot_simulation(newdata1,newdata2)

@@ -29,14 +29,16 @@ cities =   [-3.196, -59.826;
             -3.441, -60.462];
 hub = [-3.117, -60.025];
 figure(1)
-geoscatter(coordWithBestFleet1(1,:),coordWithBestFleet1(2,:),120,'v','LineWidth',1,'MarkerFaceColor',0.5*[103/255, 170/255, 62/255])
+% geoscatter(coordWithBestFleet1(1,:),coordWithBestFleet1(2,:),120,'v','LineWidth',1,'MarkerFaceColor',0.5*[103/255, 170/255, 62/255])
+
+% geoscatter(coordWithBestFleet2(1,:),coordWithBestFleet2(2,:),120,'^','LineWidth',1,'MarkerFaceColor',[191/255, 50/255, 136/255])
+geoscatter(cities(:,1),cities(:,2),10,'filled','k','MarkerFaceColor',[200/255, 200/255, 100/255])
 hold on
-geoscatter(coordWithBestFleet2(1,:),coordWithBestFleet2(2,:),120,'^','LineWidth',1,'MarkerFaceColor',[191/255, 50/255, 136/255])
-geoscatter(cities(:,1),cities(:,2),300,'filled','s','MarkerFaceColor',[200/255, 200/255, 100/255])
-geoscatter(hub(1),hub(2),600,'filled','pk')
-legend('1 Airship','2 Airships','Original Cities', 'Manaus')
+geoscatter(hub(1),hub(2),10,'filled','k')
+% legend('1 Airship','2 Airships','Original Cities', 'Manaus')
 hold off
 % axesm('MapProjection','mercator')
 geobasemap colorterrain
 axes = gca;
 axes.FontSize = 16;
+axes.Grid = 'off';
