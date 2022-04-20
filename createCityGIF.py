@@ -34,7 +34,7 @@ def getCoordinates(a,abefore,aafter):
 
 def create_new_data_array(data1):
     oldwindow = 8760
-    newStep = 0.01
+    newStep = 0.05
     newwindowLength = int(oldwindow/newStep)
     # time, activity, lat, lon, payload level, fuel level
     newdata1 = -99999 * np.ones((newwindowLength,6))
@@ -128,7 +128,7 @@ def plot_simulation(newdata1,newdata2):
 
     rx, ry = 30., 15.
     area = rx * ry * np.pi
-    theta = np.arange(0, 2 * np.pi + 0.01, 0.1)
+    theta = np.arange(0, 2 * np.pi + 0.1, 0.1)
     verts = np.column_stack([rx / area * np.cos(theta), ry / area * np.sin(theta)])
 
     # font = {'family': 'sanserif',
@@ -142,11 +142,11 @@ def plot_simulation(newdata1,newdata2):
     # indend2 = np.argwhere(newdata2[:,0]==6991)
     # indstart = np.min(np.array([indstart1,indstart2]))
     # indend = np.max(np.array([indend1,indend2]))    
-    indstart = np.max(np.argwhere(np.isclose(newdata1[:,0],3230.8543403)))+1550
+    indstart = np.max(np.argwhere(np.isclose(newdata1[:,0],3230.8543403)))
     indend = np.min(np.argwhere(np.isclose(newdata1[:,0],3254.9307068)))
     lastact1 = -60
     lastact2 = -60
-    for i in np.arange(indstart+43,indend,1):
+    for i in np.arange(indstart,indend+40,1):
     # for i in np.arange(indend-400,indend-300,1):
         a1Lat = newdata1[i,2]
         a1Lon = newdata1[i,3]
@@ -174,15 +174,16 @@ def plot_simulation(newdata1,newdata2):
         plt.text(-60.344, -3.387,'  Jutai', fontsize=12)
         plt.scatter(-60.462, -3.441, s=75,c='k',marker="o") #plot m
         plt.text(-60.462, -3.441,'  Manaquiri', fontsize=12)
-        plt.scatter(a1Lon-0.01,a1Lat, s=1000,color=[0.11,0.45,0.67],alpha = 0.5,marker=verts)
-        plt.scatter(a1Lon-0.01,a1Lat, s=1000,facecolors='none', edgecolors=edge1, alpha = 0.9,marker=verts,linewidths=3)
-        plt.scatter(a2Lon+0.01,a2Lat, s=1000,color=[1.0,0.57,0.0],alpha = 0.5,marker=verts)
-        plt.scatter(a2Lon+0.01,a2Lat, s=1000,facecolors='none', edgecolors=edge2, alpha = 0.9,marker=verts,linewidths=3)
+        plt.scatter(a1Lon-0.01,a1Lat, s=1000,color=[0.11,0.45,0.67],alpha = 0.8,marker=verts)
+        plt.scatter(a1Lon-0.01,a1Lat, s=1000,facecolors='none', edgecolors=edge1, alpha = 0.95,marker=verts,linewidths=3)
+        plt.scatter(a2Lon+0.01,a2Lat, s=1000,color=[1.0,0.57,0.0],alpha = 0.8,marker=verts)
+        plt.scatter(a2Lon+0.01,a2Lat, s=1000,facecolors='none', edgecolors=edge2, alpha = 0.95,marker=verts,linewidths=3)
         plt.savefig("gif/frame_" + str(i).zfill(7) + ".png",dpi=500, bbox_inches = 'tight',pad_inches = 0.05)#, transparent=True)
         plt.gcf().canvas.flush_events() # Make sure the canvas is ready to go for the next step
 
 
-    
+    import glob # Need this to load photos (better than holding them in RAM forever)
+    from PIL import Image
     # # Create the frames
     frames = [] # This holds each image
     imgs = glob.glob("gif/frame_*.png") # load 'em in
@@ -196,7 +197,7 @@ def plot_simulation(newdata1,newdata2):
     frames[0].save('gif/output.gif', format='GIF',
                     append_images=frames[1:],
                     save_all=True,
-                    duration=len(imgs)*0.005, loop=1,)
+                    duration=len(imgs)*0.0000005, loop=1,)
     # print("saved")
 
 def plot_map():

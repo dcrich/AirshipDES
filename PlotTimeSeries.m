@@ -33,8 +33,9 @@ ylabel('Payload Level (tons)')
 labels = {'A','B','C'};
 xline([2074.92,2076.27,2077.54],'--',labels,'Color',[0.5,0,0],...
     'LineWidth',1,'LabelVerticalAlignment','top','LabelOrientation','horizontal','FontSize',16)
-legend('Larger Payload','Smaller Payload','Events','Location','southwest')
+legend('Larger Payload Airship','Smaller Payload Airship','Events','Location','southwest')
 set(gca,'FontSize',18)
+grid on
 hold off
 xlim([2070,2081])
 Activity1(889) = -3;
@@ -49,13 +50,14 @@ xline([2074.92,2076.27,2077.54],'--',labels,'Color',[0.5,0,0],...
     'LineWidth',1,'LabelVerticalAlignment','bottom','LabelOrientation','horizontal','FontSize',16)
 % plot(SimulationTime4,Activity4, 'Color', [0.4660 0.6740 0.1880],'LineWidth',2)
 % legend('27-0','27-1','26-0','26-1')
-legend('Larger Payload','Smaller Payload','Events','Location','southwest')
+legend('Larger Payload Airship','Smaller Payload Airship','Events','Location','southwest')
 xlabel('Simulation Time (hours)')
 ylabel('Airship Status')
 xlim([2070,2081])
 ylim([-3.2,3.2])
 names = {'Manaus (EOD)'; ''; 'Manus (Unload)'; 'Careiro'; 'Iranduba'; 'Jutaí'; 'Mantaquiri';''};
 set(gca,'ytick',-3:4,'yticklabel',names,'FontSize',18)
+grid on
 hold off
 %%
 max(PayloadLevel1(1:length(PayloadLevel3)) - PayloadLevel3)
